@@ -80,7 +80,7 @@ export default function LandingPage() {
       {/* Main content area */}
       <main className="flex flex-col flex-grow w-full">
         {/* Hero Section */}
-        <section className="flex flex-col items-center justify-center w-full p-4 md:p-8 text-center bg-primary text-primary-foreground">
+        <section className="flex flex-col items-center justify-center w-full p-4 md:p-8 text-center bg-primary text-primary-foreground flex-grow">
           <div className="w-full max-w-2xl py-10 md:py-16">
             <Card className="shadow-xl bg-card text-card-foreground"> 
               <CardHeader className="pb-4 pt-8">
@@ -228,7 +228,7 @@ export default function LandingPage() {
 
       </main>
 
-      <footer className="text-center py-8 animate-fadeIn bg-background border-t border-border" style={{ animationDelay: '0.5s', opacity: 0 }}>
+      <footer className="w-full text-center py-6 animate-fadeIn bg-background border-t border-border" style={{ animationDelay: '0.5s', opacity: 0 }}>
         <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} TaskWise AI. All rights reserved.</p>
       </footer>
     </div>

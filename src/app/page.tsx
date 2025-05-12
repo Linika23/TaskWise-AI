@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -98,7 +97,7 @@ export default function TaskWisePage() {
     const newSavedGoal: SavedGoal = {
       id: crypto.randomUUID(), 
       mainGoal: currentGoalText,
-      subtasks: currentSubtasks, // currentSubtasks now includes deadlines
+      subtasks: currentSubtasks, 
       savedAt: new Date().toLocaleString(),
     };
 
@@ -116,15 +115,31 @@ export default function TaskWisePage() {
         subtask.id === taskId ? { ...subtask, done: !subtask.done } : subtask
       )
     );
+    // Note: This does not currently update savedGoals. Consider consistency with other operations.
   };
 
   const handleDeleteSubtask = (taskId: string) => {
     setCurrentSubtasks(prevSubtasks =>
       prevSubtasks.filter(subtask => subtask.id !== taskId)
     );
+
+    setSavedGoals(prevSavedGoals =>
+      prevSavedGoals.map(goal => {
+        if (goal.subtasks.some(st => st.id === taskId)) {
+          return {
+            ...goal,
+            subtasks: goal.subtasks.filter(st => st.id !== taskId),
+          };
+        }
+        return goal;
+      })
+      // Optionally, filter out goals that become empty of subtasks, though this might be too aggressive.
+      // .filter(goal => goal.subtasks.length > 0) 
+    );
+
     toast({
       title: "Subtask Deleted",
-      description: "The subtask has been removed from the current plan.",
+      description: "The subtask has been removed from the current plan and any matching saved plans.",
     });
   };
 
@@ -148,6 +163,17 @@ export default function TaskWisePage() {
         subtask.id === updatedTask.id ? updatedTask : subtask
       )
     );
+     // Note: This does not currently update savedGoals. Consider consistency with other operations.
+    // For consistency with deadline and delete, you might want to update savedGoals here too:
+    // setSavedGoals(prevSavedGoals => 
+    //   prevSavedGoals.map(goal => ({
+    //     ...goal,
+    //     subtasks: goal.subtasks.map(st => 
+    //       st.id === updatedTask.id ? { ...st, ...updatedTask } : st
+    //     )
+    //   }))
+    // );
+
     setIsEditModalOpen(false);
     setSubtaskToEdit(null);
     toast({
@@ -226,7 +252,6 @@ export default function TaskWisePage() {
 
     setSavedGoals(prevSavedGoals => 
       prevSavedGoals.map(goal => {
-        // Check if this goal contains the subtask
         const subtaskExistsInGoal = goal.subtasks.some(st => st.id === taskId);
         if (subtaskExistsInGoal) {
           return {
@@ -246,8 +271,8 @@ export default function TaskWisePage() {
       title: newDeadlineDate ? "Deadline Set!" : "Deadline Cleared!",
       description: `Deadline for subtask has been ${newDeadlineDate ? 'updated' : 'removed'}.`,
     });
-    setIsDeadlineModalOpen(false); // Close modal after saving
-    setSubtaskForDeadline(null); // Clear the subtask being edited for deadline
+    setIsDeadlineModalOpen(false); 
+    setSubtaskForDeadline(null); 
   };
 
 
@@ -324,7 +349,7 @@ export default function TaskWisePage() {
                   onDeleteTask={handleDeleteSubtask}
                   onEditTask={handleEditSubtask}
                   onBreakIntoSteps={handleBreakIntoSteps}
-                  onSetDeadline={handleOpenDeadlineModal} // Updated prop
+                  onSetDeadline={handleOpenDeadlineModal} 
                 />
               </CardContent>
             </Card>

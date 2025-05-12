@@ -12,7 +12,7 @@ import DeadlinePickerModal from '@/components/DeadlinePickerModal';
 import GoalDisplay from '@/components/GoalDisplay';
 import AddGoalModal, { type AddGoalFormValues } from '@/components/AddGoalModal';
 import FullCalendarDisplay from '@/components/FullCalendarDisplay';
-import FloatingChatbotButton from '@/components/FloatingChatbotButton'; // Added
+// import FloatingChatbotButton from '@/components/FloatingChatbotButton'; // Removed
 import { Button } from '@/components/ui/button';
 import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
 import { generateStepsForSubtask } from '@/ai/flows/generate-steps-for-subtask'; 
@@ -502,7 +502,7 @@ export default function DashboardPage() {
           onClose={() => setIsAddGoalModalOpen(false)}
           onAddGoal={handleAddNewGoal}
         />
-        <FloatingChatbotButton /> 
+        {/* <FloatingChatbotButton /> Removed */}
         <footer className="text-center py-8 mt-auto animate-fadeIn" style={{ animationDelay: '0.5s', opacity: 0 }}>
           <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} TaskWise AI. All rights reserved.</p>
         </footer>

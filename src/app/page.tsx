@@ -4,12 +4,47 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardDescription, CardTitle } from '@/components/ui/card';
-import { BrainCircuit, Target, Sparkles, CalendarPlus, ListChecks } from 'lucide-react';
+import { BrainCircuit, Target, Sparkles, CalendarPlus, ListChecks, HelpCircle, Lock, Lightbulb } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
 
 const CATCHY_TAGLINE = "Smarter Planning. Powered by AI.";
 const TYPING_SPEED_TAGLINE = 100; // milliseconds per character
+
+const faqItems = [
+  {
+    id: "faq-1",
+    question: "How does TaskWise AI help with planning?",
+    answer: "TaskWise AI uses advanced artificial intelligence to break down your large goals into manageable subtasks. Simply input your objective, and our AI will generate a detailed plan with estimated time allocations, helping you stay organized and focused.",
+    icon: <Lightbulb className="h-5 w-5 mr-2 text-primary" />
+  },
+  {
+    id: "faq-2",
+    question: "Is my data secure with TaskWise AI?",
+    answer: "Yes, we prioritize your data security. All your task and goal information is stored locally in your browser. We do not store your personal data on our servers, ensuring your privacy and control over your information.",
+    icon: <Lock className="h-5 w-5 mr-2 text-primary" />
+  },
+  {
+    id: "faq-3",
+    question: "Can I use TaskWise AI for both personal and professional goals?",
+    answer: "Absolutely! TaskWise AI is designed to be versatile. Whether you're planning a complex work project, studying for an exam, or organizing personal errands, our AI can help you structure your efforts and achieve your objectives.",
+    icon: <Sparkles className="h-5 w-5 mr-2 text-primary" />
+  },
+  {
+    id: "faq-4",
+    question: "How does the AI generate subtasks?",
+    answer: "Our AI analyzes your main goal and uses its knowledge base to identify common steps and best practices associated with achieving similar objectives. It then breaks these down into smaller, actionable subtasks tailored to your specific goal.",
+    icon: <BrainCircuit className="h-5 w-5 mr-2 text-primary" />
+  }
+];
 
 export default function LandingPage() {
   const router = useRouter();
@@ -118,6 +153,82 @@ export default function LandingPage() {
             </Card>
           </div>
         </section>
+
+        {/* Screenshots Preview Section */}
+        <section className="flex flex-col items-center justify-center w-full p-4 py-12 md:p-8 md:py-20 bg-secondary text-foreground">
+          <div className="w-full max-w-4xl">
+            <Card className="shadow-xl animate-fadeIn" style={{ animationDelay: '0.2s', opacity: 0 }}>
+              <CardHeader className="text-center">
+                <CardTitle className="text-3xl md:text-4xl font-bold text-primary">App Preview</CardTitle>
+                <CardDescription className="text-lg text-muted-foreground mt-2">
+                  Get a glimpse of TaskWise AI in action.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-8">
+                <div className="relative aspect-video rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  <Image
+                    src="https://picsum.photos/seed/taskwise1/600/400"
+                    alt="TaskWise AI Goal Input"
+                    layout="fill"
+                    objectFit="cover"
+                    data-ai-hint="goal input interface"
+                  />
+                   <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                    <p className="text-white text-lg font-semibold">Goal & Subtask Planning</p>
+                  </div>
+                </div>
+                <div className="relative aspect-video rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                   <Image
+                    src="https://picsum.photos/seed/taskwise2/600/400"
+                    alt="TaskWise AI Calendar View"
+                    layout="fill"
+                    objectFit="cover"
+                    data-ai-hint="calendar schedule view"
+                  />
+                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                    <p className="text-white text-lg font-semibold">Calendar & Deadline Tracking</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="flex flex-col items-center justify-center w-full p-4 py-12 md:p-8 md:py-20 bg-background text-foreground">
+          <div className="w-full max-w-3xl">
+            <Card className="shadow-xl animate-fadeIn" style={{ animationDelay: '0.3s', opacity: 0 }}>
+              <CardHeader className="text-center">
+                <CardTitle className="text-3xl md:text-4xl font-bold text-primary flex items-center justify-center">
+                  <HelpCircle className="h-8 w-8 mr-3" />
+                  Frequently Asked Questions
+                </CardTitle>
+                <CardDescription className="text-lg text-muted-foreground mt-2">
+                  Find answers to common questions about TaskWise AI.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-8">
+                <Accordion type="single" collapsible className="w-full">
+                  {faqItems.map((item) => (
+                    <AccordionItem value={item.id} key={item.id} className="border-b">
+                      <AccordionTrigger className="text-left text-lg hover:no-underline">
+                        <div className="flex items-center">
+                           {item.icon}
+                           <span>{item.question}</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="text-muted-foreground text-base pt-2 pb-4">
+                        {item.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+
       </main>
 
       <footer className="text-center py-8 animate-fadeIn bg-background" style={{ animationDelay: '0.5s', opacity: 0 }}>
@@ -126,3 +237,4 @@ export default function LandingPage() {
     </div>
   );
 }
+

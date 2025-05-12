@@ -1,11 +1,11 @@
 
 "use client";
 
-import type { SavedGoal } from '@/app/page'; // Assuming page.tsx exports this type
+import type { SavedGoal } from '@/app/page'; 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ListChecks, Clock, Trash2, CalendarDays, ChevronDown, Edit3, Sparkles as AiIcon, CalendarPlus } from 'lucide-react';
+import { ListChecks, Clock, Trash2, CalendarDays, ChevronDown, CalendarClock } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -14,7 +14,8 @@ import {
 } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from '@/lib/utils';
-import type { ExtendedSubtask } from './SubtaskList'; // Import ExtendedSubtask
+import type { ExtendedSubtask } from './SubtaskList';
+import { format } from 'date-fns';
 
 interface SavedTasksDisplayProps {
   savedGoals: SavedGoal[];
@@ -120,7 +121,12 @@ export default function SavedTasksDisplay({ savedGoals, setSavedGoals }: SavedTa
                         <Clock className="mr-2 h-3.5 w-3.5" />
                         <span>Estimated time: {subtask.estimatedTime}</span>
                       </div>
-                       {/* Placeholder for action buttons if needed in saved view later */}
+                      {subtask.deadline && typeof subtask.deadline === 'string' && (
+                        <div className={cn("flex items-center text-xs text-muted-foreground mt-1.5", subtask.done && "line-through")}>
+                          <CalendarClock className="mr-2 h-3.5 w-3.5" />
+                          <span>Deadline: {format(new Date(subtask.deadline), "PP")}</span>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 ))}
@@ -132,4 +138,3 @@ export default function SavedTasksDisplay({ savedGoals, setSavedGoals }: SavedTa
     </div>
   );
 }
-

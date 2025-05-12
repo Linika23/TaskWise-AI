@@ -3,12 +3,14 @@ import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Clock, Edit3, Trash2, Sparkles as AiIcon, CalendarPlus, GripVertical } from 'lucide-react';
+import { Clock, Edit3, Trash2, Sparkles as AiIcon, CalendarPlus, CalendarClock } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
 
 export type ExtendedSubtask = GenerateSubtasksOutput['subtasks'][0] & {
   id: string;
   done: boolean;
+  deadline?: string; // Optional deadline string (ISO format)
 };
 
 interface SubtaskListProps {
@@ -17,7 +19,7 @@ interface SubtaskListProps {
   onDeleteTask: (taskId: string) => void;
   onEditTask: (taskId: string) => void;
   onBreakIntoSteps: (taskId: string) => void;
-  onSetDeadline: (taskId: string) => void;
+  onSetDeadline: (taskId: string) => void; // Opens the deadline picker modal
 }
 
 export default function SubtaskList({ 
@@ -64,6 +66,12 @@ export default function SubtaskList({
                 <Clock className="mr-1.5 h-3.5 w-3.5 inline-block relative -top-px" />
                 Estimated time: {subtask.estimatedTime}
               </CardDescription>
+              {subtask.deadline && typeof subtask.deadline === 'string' && (
+                <p className={cn("text-xs text-muted-foreground mt-1", subtask.done && "line-through")}>
+                  <CalendarClock className="mr-1 h-3.5 w-3.5 inline-block relative -top-px" />
+                  Deadline: {format(new Date(subtask.deadline), "PP")}
+                </p>
+              )}
             </div>
           </CardHeader>
           <CardContent className="p-4 pt-0">
@@ -87,4 +95,3 @@ export default function SubtaskList({
     </div>
   );
 }
-

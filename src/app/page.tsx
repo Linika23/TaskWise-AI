@@ -7,14 +7,16 @@ import GoalInputForm from '@/components/GoalInputForm';
 import SubtaskList, { type ExtendedSubtask } from '@/components/SubtaskList';
 import SavedTasksDisplay from '@/components/SavedTasksDisplay';
 import EditSubtaskModal from '@/components/EditSubtaskModal';
-import StepsDisplayModal from '@/components/StepsDisplayModal'; // Import new modal
+import StepsDisplayModal from '@/components/StepsDisplayModal'; 
+import DeadlinePickerModal from '@/components/DeadlinePickerModal'; // Import DeadlinePickerModal
 import { Button } from '@/components/ui/button';
 import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
-import { generateStepsForSubtask } from '@/ai/flows/generate-steps-for-subtask'; // Import new flow
+import { generateStepsForSubtask } from '@/ai/flows/generate-steps-for-subtask'; 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Terminal, Loader2, ListChecks, Save, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { format } from 'date-fns'; // For date formatting if needed here
 
 export interface SavedGoal {
   id: string;
@@ -41,6 +43,9 @@ export default function TaskWisePage() {
     isLoading: boolean;
     error?: string | null;
   } | null>(null);
+
+  const [isDeadlineModalOpen, setIsDeadlineModalOpen] = useState<boolean>(false);
+  const [subtaskForDeadline, setSubtaskForDeadline] = useState<ExtendedSubtask | null>(null);
 
 
   useEffect(() => {
@@ -93,7 +98,7 @@ export default function TaskWisePage() {
     const newSavedGoal: SavedGoal = {
       id: crypto.randomUUID(), 
       mainGoal: currentGoalText,
-      subtasks: currentSubtasks, 
+      subtasks: currentSubtasks, // currentSubtasks now includes deadlines
       savedAt: new Date().toLocaleString(),
     };
 
@@ -198,11 +203,51 @@ export default function TaskWisePage() {
     }
   };
 
-  const handleSetDeadline = (taskId: string) => {
+  const handleOpenDeadlineModal = (taskId: string) => {
+    const taskToSetDeadline = currentSubtasks.find(st => st.id === taskId);
+    if (taskToSetDeadline) {
+      setSubtaskForDeadline(taskToSetDeadline);
+      setIsDeadlineModalOpen(true);
+    } else {
+      toast({ variant: "destructive", title: "Error", description: "Subtask not found." });
+    }
+  };
+
+  const handleSaveNewDeadline = (taskId: string, newDeadlineDate: Date | undefined) => {
+    const deadlineISO = newDeadlineDate ? newDeadlineDate.toISOString() : undefined;
+    
+    setCurrentSubtasks(prevSubtasks =>
+      prevSubtasks.map(subtask =>
+        subtask.id === taskId
+          ? { ...subtask, deadline: deadlineISO }
+          : subtask
+      )
+    );
+
+    setSavedGoals(prevSavedGoals => 
+      prevSavedGoals.map(goal => {
+        // Check if this goal contains the subtask
+        const subtaskExistsInGoal = goal.subtasks.some(st => st.id === taskId);
+        if (subtaskExistsInGoal) {
+          return {
+            ...goal,
+            subtasks: goal.subtasks.map(st => 
+              st.id === taskId 
+                ? { ...st, deadline: deadlineISO }
+                : st
+            )
+          };
+        }
+        return goal;
+      })
+    );
+
     toast({
-      title: "Set Deadline",
-      description: `Deadline picker for subtask ${taskId.substring(0,8)}... is coming soon!`,
+      title: newDeadlineDate ? "Deadline Set!" : "Deadline Cleared!",
+      description: `Deadline for subtask has been ${newDeadlineDate ? 'updated' : 'removed'}.`,
     });
+    setIsDeadlineModalOpen(false); // Close modal after saving
+    setSubtaskForDeadline(null); // Clear the subtask being edited for deadline
   };
 
 
@@ -279,7 +324,7 @@ export default function TaskWisePage() {
                   onDeleteTask={handleDeleteSubtask}
                   onEditTask={handleEditSubtask}
                   onBreakIntoSteps={handleBreakIntoSteps}
-                  onSetDeadline={handleSetDeadline}
+                  onSetDeadline={handleOpenDeadlineModal} // Updated prop
                 />
               </CardContent>
             </Card>
@@ -307,6 +352,15 @@ export default function TaskWisePage() {
             setStepsModalContent(null);
           }}
           content={stepsModalContent}
+        />
+        <DeadlinePickerModal
+          isOpen={isDeadlineModalOpen}
+          onClose={() => {
+            setIsDeadlineModalOpen(false);
+            setSubtaskForDeadline(null);
+          }}
+          subtask={subtaskForDeadline}
+          onSaveDeadline={handleSaveNewDeadline}
         />
         <footer className="text-center py-8 mt-auto animate-fadeIn" style={{ animationDelay: '0.6s', opacity: 0 }}>
           <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} TaskWise. All rights reserved.</p>

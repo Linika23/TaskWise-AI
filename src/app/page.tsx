@@ -82,15 +82,15 @@ export default function LandingPage() {
         {/* Hero Section */}
         <section className="flex flex-col items-center justify-center w-full p-4 md:p-8 text-center bg-primary text-primary-foreground">
           <div className="w-full max-w-2xl py-10 md:py-16">
-            <Card className="shadow-xl"> {/* Card will use its own theme background, e.g., bg-card */}
+            <Card className="shadow-xl bg-card text-card-foreground"> 
               <CardHeader className="pb-4 pt-8">
                 <div style={{ animationDelay: '0.1s', opacity: 0 }} className="animate-fadeIn flex flex-col sm:flex-row justify-center items-center mb-2 sm:mb-4">
                   <BrainCircuit data-ai-hint="artificial intelligence brain" className="h-12 w-12 sm:h-16 sm:w-16 text-primary" />
-                  <h1 className="text-4xl sm:text-5xl font-bold ml-2 sm:ml-4 text-foreground mt-2 sm:mt-0">TaskWise AI</h1>
+                  <h1 className="text-4xl sm:text-5xl font-bold ml-2 sm:ml-4 text-card-foreground mt-2 sm:mt-0">TaskWise AI</h1>
                 </div>
               </CardHeader>
               <CardContent className="space-y-5 sm:space-y-6 px-4 pb-8">
-                <p  className="text-2xl sm:text-3xl text-foreground font-semibold min-h-[2.25em] sm:min-h-[2.5em]">
+                <p  className="text-2xl sm:text-3xl text-card-foreground font-semibold min-h-[2.25em] sm:min-h-[2.5em]">
                   {animatedTagline}
                   <span className="animate-ping">|</span>
                 </p>
@@ -111,9 +111,9 @@ export default function LandingPage() {
         </section>
 
         {/* How It Works Section */}
-        <section className="flex flex-col items-center justify-center w-full p-4 py-12 md:p-8 md:py-20 bg-background text-foreground">
+        <section className="flex flex-col items-center justify-center w-full p-4 py-12 md:p-8 md:py-20 bg-primary text-primary-foreground">
           <div className="w-full max-w-4xl">
-            <Card className="shadow-xl animate-fadeIn" style={{ animationDelay: '0.1s', opacity: 0 }}>
+            <Card className="shadow-xl animate-fadeIn bg-card text-card-foreground" style={{ animationDelay: '0.1s', opacity: 0 }}>
               <CardHeader className="text-center">
                 <CardTitle className="text-3xl md:text-4xl font-bold text-primary">How TaskWise AI Works</CardTitle>
                 <CardDescription className="text-lg text-muted-foreground mt-2">
@@ -121,30 +121,30 @@ export default function LandingPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 pt-8">
-                <div className="flex flex-col items-center p-6 bg-card/30 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div className="flex flex-col items-center p-6 bg-card/80 dark:bg-card/30 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
                   <Target className="h-12 w-12 text-primary mb-4" data-ai-hint="target goal" />
-                  <h3 className="text-xl font-semibold text-foreground mb-2">1. Define Your Goal</h3>
+                  <h3 className="text-xl font-semibold text-card-foreground mb-2">1. Define Your Goal</h3>
                   <p className="text-sm text-muted-foreground text-center">
                     Clearly state what you want to accomplish.
                   </p>
                 </div>
-                <div className="flex flex-col items-center p-6 bg-card/30 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div className="flex flex-col items-center p-6 bg-card/80 dark:bg-card/30  rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
                   <Sparkles className="h-12 w-12 text-primary mb-4" data-ai-hint="magic AI" />
-                  <h3 className="text-xl font-semibold text-foreground mb-2">2. Get AI Subtasks</h3>
+                  <h3 className="text-xl font-semibold text-card-foreground mb-2">2. Get AI Subtasks</h3>
                   <p className="text-sm text-muted-foreground text-center">
                     Our AI breaks it down into manageable steps.
                   </p>
                 </div>
-                <div className="flex flex-col items-center p-6 bg-card/30 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div className="flex flex-col items-center p-6 bg-card/80 dark:bg-card/30 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
                   <CalendarPlus className="h-12 w-12 text-primary mb-4" data-ai-hint="calendar deadline" />
-                  <h3 className="text-xl font-semibold text-foreground mb-2">3. Set Deadlines</h3>
+                  <h3 className="text-xl font-semibold text-card-foreground mb-2">3. Set Deadlines</h3>
                   <p className="text-sm text-muted-foreground text-center">
                     Assign target dates to stay on track effectively.
                   </p>
                 </div>
-                <div className="flex flex-col items-center p-6 bg-card/30 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div className="flex flex-col items-center p-6 bg-card/80 dark:bg-card/30 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
                   <ListChecks className="h-12 w-12 text-primary mb-4" data-ai-hint="checklist progress" />
-                  <h3 className="text-xl font-semibold text-foreground mb-2">4. Track & Complete</h3>
+                  <h3 className="text-xl font-semibold text-card-foreground mb-2">4. Track & Complete</h3>
                   <p className="text-sm text-muted-foreground text-center">
                     Monitor your progress and achieve your goals.
                   </p>
@@ -155,9 +155,9 @@ export default function LandingPage() {
         </section>
 
         {/* FAQ Section */}
-        <section className="flex flex-col items-center justify-center w-full p-4 py-12 md:p-8 md:py-20 bg-background text-foreground">
+        <section className="flex flex-col items-center justify-center w-full p-4 py-12 md:p-8 md:py-20 bg-primary text-primary-foreground">
           <div className="w-full max-w-3xl">
-            <Card className="shadow-xl animate-fadeIn" style={{ animationDelay: '0.3s', opacity: 0 }}>
+            <Card className="shadow-xl animate-fadeIn bg-card text-card-foreground" style={{ animationDelay: '0.3s', opacity: 0 }}>
               <CardHeader className="text-center">
                 <CardTitle className="text-3xl md:text-4xl font-bold text-primary flex items-center justify-center">
                   <HelpCircle className="h-8 w-8 mr-3" />
@@ -170,8 +170,8 @@ export default function LandingPage() {
               <CardContent className="pt-8">
                 <Accordion type="single" collapsible className="w-full">
                   {faqItems.map((item) => (
-                    <AccordionItem value={item.id} key={item.id} className="border-b">
-                      <AccordionTrigger className="text-left text-lg hover:no-underline">
+                    <AccordionItem value={item.id} key={item.id} className="border-b border-border">
+                      <AccordionTrigger className="text-left text-lg hover:no-underline text-card-foreground">
                         <div className="flex items-center">
                            {item.icon}
                            <span>{item.question}</span>

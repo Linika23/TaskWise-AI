@@ -4,25 +4,25 @@
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import GoalInputForm from '@/components/GoalInputForm';
-import SubtaskList from '@/components/SubtaskList';
+import SubtaskList, { type ExtendedSubtask } from '@/components/SubtaskList';
 import SavedTasksDisplay from '@/components/SavedTasksDisplay';
 import { Button } from '@/components/ui/button';
 import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Terminal, Loader2, ListChecks, Save, Sparkles, CalendarDays } from "lucide-react";
+import { Terminal, Loader2, ListChecks, Save, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export interface SavedGoal {
   id: string;
   mainGoal: string;
-  subtasks: GenerateSubtasksOutput['subtasks'];
+  subtasks: ExtendedSubtask[]; // Updated to use ExtendedSubtask
   savedAt: string;
 }
 
 export default function TaskWisePage() {
   const [currentGoalText, setCurrentGoalText] = useState<string>("");
-  const [currentSubtasks, setCurrentSubtasks] = useState<GenerateSubtasksOutput['subtasks']>([]);
+  const [currentSubtasks, setCurrentSubtasks] = useState<ExtendedSubtask[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [savedGoals, setSavedGoals] = useState<SavedGoal[]>([]);
@@ -35,27 +35,32 @@ export default function TaskWisePage() {
         setSavedGoals(JSON.parse(storedGoals));
       } catch (e) {
         console.error("Failed to parse saved goals from localStorage", e);
-        localStorage.removeItem('taskwise_saved_goals'); // Clear corrupted data
+        localStorage.removeItem('taskwise_saved_goals'); 
       }
     }
   }, []);
 
   useEffect(() => {
-    if (savedGoals.length > 0 || localStorage.getItem('taskwise_saved_goals')) { // only write if there's something to write or clear
+    if (savedGoals.length > 0 || localStorage.getItem('taskwise_saved_goals')) {
         localStorage.setItem('taskwise_saved_goals', JSON.stringify(savedGoals));
     }
   }, [savedGoals]);
 
-  const handleSubtasksGenerated = (goalText: string, subtasks: GenerateSubtasksOutput['subtasks']) => {
+  const handleSubtasksGenerated = (goalText: string, subtasksFromAI: GenerateSubtasksOutput['subtasks']) => {
     setCurrentGoalText(goalText);
-    setCurrentSubtasks(subtasks);
+    const extendedSubtasks: ExtendedSubtask[] = subtasksFromAI.map(subtask => ({
+      ...subtask,
+      id: crypto.randomUUID(),
+      done: false,
+    }));
+    setCurrentSubtasks(extendedSubtasks);
     setError(null); 
-    if (subtasks.length > 0) {
+    if (extendedSubtasks.length > 0) {
       toast({
         title: "Subtasks Generated!",
         description: `Successfully generated subtasks for "${goalText.substring(0,50)}...".`,
       });
-    } else if (!error && !isLoading) { // If no subtasks and no error, means AI returned empty
+    } else if (!error && !isLoading) { 
        setError(`No subtasks were generated for "${goalText.substring(0,50)}...". Try rephrasing your goal.`);
     }
   };
@@ -73,7 +78,7 @@ export default function TaskWisePage() {
     const newSavedGoal: SavedGoal = {
       id: crypto.randomUUID(), 
       mainGoal: currentGoalText,
-      subtasks: currentSubtasks,
+      subtasks: currentSubtasks, // Already ExtendedSubtask[]
       savedAt: new Date().toLocaleString(),
     };
 
@@ -84,6 +89,46 @@ export default function TaskWisePage() {
       className: "bg-success text-success-foreground"
     });
   };
+
+  const handleToggleSubtaskDone = (taskId: string) => {
+    setCurrentSubtasks(prevSubtasks =>
+      prevSubtasks.map(subtask =>
+        subtask.id === taskId ? { ...subtask, done: !subtask.done } : subtask
+      )
+    );
+  };
+
+  const handleDeleteSubtask = (taskId: string) => {
+    setCurrentSubtasks(prevSubtasks =>
+      prevSubtasks.filter(subtask => subtask.id !== taskId)
+    );
+    toast({
+      title: "Subtask Deleted",
+      description: "The subtask has been removed from the current plan.",
+    });
+  };
+
+  const handleEditSubtask = (taskId: string) => {
+    toast({
+      title: "Edit Subtask",
+      description: `Editing functionality for subtask ${taskId.substring(0,8)}... is coming soon!`,
+    });
+  };
+
+  const handleBreakIntoSteps = (taskId: string) => {
+    toast({
+      title: "Break Into Steps",
+      description: `AI step breakdown for subtask ${taskId.substring(0,8)}... is coming soon!`,
+    });
+  };
+
+  const handleSetDeadline = (taskId: string) => {
+    toast({
+      title: "Set Deadline",
+      description: `Deadline picker for subtask ${taskId.substring(0,8)}... is coming soon!`,
+    });
+  };
+
 
   return (
     <div className="flex flex-col min-h-screen bg-secondary font-sans">
@@ -152,7 +197,14 @@ export default function TaskWisePage() {
                 {currentGoalText && <CardDescription className="mt-2">For your goal: "{currentGoalText}"</CardDescription>}
               </CardHeader>
               <CardContent>
-                <SubtaskList subtasks={currentSubtasks} />
+                <SubtaskList
+                  subtasks={currentSubtasks}
+                  onToggleDone={handleToggleSubtaskDone}
+                  onDeleteTask={handleDeleteSubtask}
+                  onEditTask={handleEditSubtask}
+                  onBreakIntoSteps={handleBreakIntoSteps}
+                  onSetDeadline={handleSetDeadline}
+                />
               </CardContent>
             </Card>
           )}

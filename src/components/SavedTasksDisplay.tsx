@@ -1,9 +1,11 @@
+
 "use client";
 
 import type { SavedGoal } from '@/app/page'; // Assuming page.tsx exports this type
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ListChecks, Clock, Trash2, CalendarDays, ChevronDown } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ListChecks, Clock, Trash2, CalendarDays, ChevronDown, Edit3, Sparkles as AiIcon, CalendarPlus } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -11,6 +13,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from '@/lib/utils';
+import type { ExtendedSubtask } from './SubtaskList'; // Import ExtendedSubtask
 
 interface SavedTasksDisplayProps {
   savedGoals: SavedGoal[];
@@ -40,6 +44,22 @@ export default function SavedTasksDisplay({ savedGoals, setSavedGoals }: SavedTa
       variant: "default"
     });
   };
+  
+  const toggleSubtaskDoneInSavedGoal = (goalId: string, subtaskId: string) => {
+    setSavedGoals(prevGoals =>
+      prevGoals.map(goal =>
+        goal.id === goalId
+          ? {
+              ...goal,
+              subtasks: goal.subtasks.map(st =>
+                st.id === subtaskId ? { ...st, done: !st.done } : st
+              ),
+            }
+          : goal
+      )
+    );
+  };
+
 
   return (
     <div className="mt-12 w-full">
@@ -73,16 +93,34 @@ export default function SavedTasksDisplay({ savedGoals, setSavedGoals }: SavedTa
             <AccordionContent className="p-4 pt-0 bg-background/30">
               <h4 className="text-sm font-semibold mt-2 mb-2 text-muted-foreground flex items-center"><ListChecks className="w-4 h-4 mr-2 text-primary"/>Subtasks:</h4>
               <div className="space-y-3">
-                {goal.subtasks.map((subtask, subIndex) => (
-                  <Card key={subIndex} className="bg-background/80 shadow-sm">
-                    <CardHeader className="p-3">
-                      <CardTitle className="text-md font-normal">{subtask.task}</CardTitle>
+                {goal.subtasks.map((subtask: ExtendedSubtask) => (
+                  <Card key={subtask.id} className={cn("bg-background/80 shadow-sm", subtask.done && "opacity-70")}>
+                    <CardHeader className="p-3 flex flex-row items-start gap-3 space-y-0">
+                       <Checkbox
+                        id={`saved-${goal.id}-${subtask.id}`}
+                        checked={subtask.done}
+                        onCheckedChange={() => toggleSubtaskDoneInSavedGoal(goal.id, subtask.id)}
+                        aria-label={subtask.done ? "Mark task as not done" : "Mark task as done"}
+                        className="mt-1"
+                      />
+                      <div className="flex-grow">
+                        <label
+                          htmlFor={`saved-${goal.id}-${subtask.id}`}
+                           className={cn(
+                            "text-md font-normal cursor-pointer",
+                            subtask.done && "line-through text-muted-foreground"
+                          )}
+                        >
+                          {subtask.task}
+                        </label>
+                      </div>
                     </CardHeader>
                     <CardContent className="p-3 pt-0">
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Clock className="mr-2 h-4 w-4" />
+                      <div className="flex items-center text-xs text-muted-foreground">
+                        <Clock className="mr-2 h-3.5 w-3.5" />
                         <span>Estimated time: {subtask.estimatedTime}</span>
                       </div>
+                       {/* Placeholder for action buttons if needed in saved view later */}
                     </CardContent>
                   </Card>
                 ))}

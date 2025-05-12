@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { generateSubtasks, type GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
@@ -12,11 +12,34 @@ interface GoalInputFormProps {
   onSubtasksGenerated: (goal: string, subtasks: GenerateSubtasksOutput['subtasks']) => void;
   setIsLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  isLoading: boolean; // Added isLoading prop
+  isLoading: boolean;
 }
 
-export default function GoalInputForm({ onSubtasksGenerated, setIsLoading, setError, isLoading }: GoalInputFormProps) { // Destructured isLoading
+const examplePrompts = [
+  "e.g., Plan a surprise birthday party for Sarah",
+  "Write a blog post about AI productivity",
+  "Prepare for my Java programming exam",
+  "Plan my weekly fitness routine",
+  "Learn to bake sourdough bread",
+  "Organize my digital files",
+];
+
+export default function GoalInputForm({ onSubtasksGenerated, setIsLoading, setError, isLoading }: GoalInputFormProps) {
   const [goalInput, setGoalInput] = useState('');
+  const [animatedPlaceholder, setAnimatedPlaceholder] = useState(examplePrompts[0]);
+  const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentPromptIndex((prevIndex) => (prevIndex + 1) % examplePrompts.length);
+    }, 3000); // Change prompt every 3 seconds
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    setAnimatedPlaceholder(examplePrompts[currentPromptIndex]);
+  }, [currentPromptIndex]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,10 +70,10 @@ export default function GoalInputForm({ onSubtasksGenerated, setIsLoading, setEr
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Textarea
-            placeholder="e.g., Plan a surprise birthday party for Sarah"
+            placeholder={animatedPlaceholder}
             value={goalInput}
             onChange={(e) => setGoalInput(e.target.value)}
-            className="min-h-[100px] text-base focus:ring-primary"
+            className="min-h-[100px] text-base focus:ring-primary transition-all duration-300 ease-in-out"
             aria-label="Main goal input"
           />
           <Button 

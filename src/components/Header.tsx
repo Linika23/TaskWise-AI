@@ -8,8 +8,8 @@ import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface HeaderProps {
-  currentView: 'tasks' | 'goals';
-  setCurrentView: Dispatch<SetStateAction<'tasks' | 'goals'>>;
+  currentView: 'tasks' | 'goals' | 'calendar';
+  setCurrentView: Dispatch<SetStateAction<'tasks' | 'goals' | 'calendar'>>;
 }
 
 export default function Header({ currentView, setCurrentView }: HeaderProps) {
@@ -48,9 +48,13 @@ export default function Header({ currentView, setCurrentView }: HeaderProps) {
           <Button 
             variant="ghost" 
             size="icon" 
-            className="text-muted-foreground hover:text-primary hover:bg-primary/10 p-2" 
-            aria-label="Calendar View (Placeholder)"
-            // onClick={() => alert("Calendar View Coming Soon!")} 
+            onClick={() => setCurrentView('calendar')}
+            className={cn(
+              "p-2 hover:bg-primary/10",
+              currentView === 'calendar' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-primary'
+            )}
+            aria-label="Calendar View"
+            aria-pressed={currentView === 'calendar'}
           >
             <CalendarDays className="h-6 w-6" /> 
           </Button>

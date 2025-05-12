@@ -10,7 +10,8 @@ import EditSubtaskModal from '@/components/EditSubtaskModal';
 import StepsDisplayModal from '@/components/StepsDisplayModal'; 
 import DeadlinePickerModal from '@/components/DeadlinePickerModal';
 import GoalDisplay from '@/components/GoalDisplay';
-import AddGoalModal, { type AddGoalFormValues } from '@/components/AddGoalModal'; // Import AddGoalModal
+import AddGoalModal, { type AddGoalFormValues } from '@/components/AddGoalModal';
+import FullCalendarDisplay from '@/components/FullCalendarDisplay'; // Import FullCalendarDisplay
 import { Button } from '@/components/ui/button';
 import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
 import { generateStepsForSubtask } from '@/ai/flows/generate-steps-for-subtask'; 
@@ -31,7 +32,7 @@ const sampleTrackedGoals: TrackedGoal[] = [
 
 
 export default function TaskWisePage() {
-  const [currentView, setCurrentView] = useState<'tasks' | 'goals'>('tasks');
+  const [currentView, setCurrentView] = useState<'tasks' | 'goals' | 'calendar'>('tasks');
   const [currentGoalText, setCurrentGoalText] = useState<string>("");
   const [currentSubtasks, setCurrentSubtasks] = useState<ExtendedSubtask[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -431,6 +432,12 @@ export default function TaskWisePage() {
                 <GoalDisplay goals={trackedGoals} onToggleComplete={handleToggleTrackedGoalComplete} />
               </div>
             </>
+          )}
+
+          {currentView === 'calendar' && (
+            <div style={{ animationDelay: '0.1s', opacity: 0 }} className="animate-fadeIn w-full">
+              <FullCalendarDisplay />
+            </div>
           )}
 
         </main>

@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import GoalInputForm from '@/components/GoalInputForm';
 import SubtaskList, { type ExtendedSubtask } from '@/components/SubtaskList';
 import SavedTasksDisplay from '@/components/SavedTasksDisplay';
+import EditSubtaskModal from '@/components/EditSubtaskModal';
 import { Button } from '@/components/ui/button';
 import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -16,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 export interface SavedGoal {
   id: string;
   mainGoal: string;
-  subtasks: ExtendedSubtask[]; // Updated to use ExtendedSubtask
+  subtasks: ExtendedSubtask[]; 
   savedAt: string;
 }
 
@@ -27,6 +28,9 @@ export default function TaskWisePage() {
   const [error, setError] = useState<string | null>(null);
   const [savedGoals, setSavedGoals] = useState<SavedGoal[]>([]);
   const { toast } = useToast();
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [subtaskToEdit, setSubtaskToEdit] = useState<ExtendedSubtask | null>(null);
 
   useEffect(() => {
     const storedGoals = localStorage.getItem('taskwise_saved_goals');
@@ -78,7 +82,7 @@ export default function TaskWisePage() {
     const newSavedGoal: SavedGoal = {
       id: crypto.randomUUID(), 
       mainGoal: currentGoalText,
-      subtasks: currentSubtasks, // Already ExtendedSubtask[]
+      subtasks: currentSubtasks, 
       savedAt: new Date().toLocaleString(),
     };
 
@@ -109,11 +113,33 @@ export default function TaskWisePage() {
   };
 
   const handleEditSubtask = (taskId: string) => {
+    const task = currentSubtasks.find(st => st.id === taskId);
+    if (task) {
+      setSubtaskToEdit(task);
+      setIsEditModalOpen(true);
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Subtask not found.",
+      });
+    }
+  };
+
+  const handleUpdateSubtask = (updatedTask: ExtendedSubtask) => {
+    setCurrentSubtasks(prevSubtasks =>
+      prevSubtasks.map(subtask =>
+        subtask.id === updatedTask.id ? updatedTask : subtask
+      )
+    );
+    setIsEditModalOpen(false);
+    setSubtaskToEdit(null);
     toast({
-      title: "Edit Subtask",
-      description: `Editing functionality for subtask ${taskId.substring(0,8)}... is coming soon!`,
+      title: "Subtask Updated",
+      description: `"${updatedTask.task.substring(0,30)}..." has been updated.`,
     });
   };
+
 
   const handleBreakIntoSteps = (taskId: string) => {
     toast({
@@ -213,6 +239,17 @@ export default function TaskWisePage() {
             <SavedTasksDisplay savedGoals={savedGoals} setSavedGoals={setSavedGoals} />
           </div>
         </main>
+        {subtaskToEdit && (
+          <EditSubtaskModal
+            isOpen={isEditModalOpen}
+            onClose={() => {
+              setIsEditModalOpen(false);
+              setSubtaskToEdit(null);
+            }}
+            subtask={subtaskToEdit}
+            onSave={handleUpdateSubtask}
+          />
+        )}
         <footer className="text-center py-8 mt-auto animate-fadeIn" style={{ animationDelay: '0.6s', opacity: 0 }}>
           <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} TaskWise. All rights reserved.</p>
         </footer>

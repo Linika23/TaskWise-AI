@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -7,7 +8,8 @@ import SubtaskList, { type ExtendedSubtask } from '@/components/SubtaskList';
 import SavedTasksDisplay from '@/components/SavedTasksDisplay';
 import EditSubtaskModal from '@/components/EditSubtaskModal';
 import StepsDisplayModal from '@/components/StepsDisplayModal'; 
-import DeadlinePickerModal from '@/components/DeadlinePickerModal'; // Import DeadlinePickerModal
+import DeadlinePickerModal from '@/components/DeadlinePickerModal';
+import GoalDisplay from '@/components/GoalDisplay'; // Import GoalDisplay
 import { Button } from '@/components/ui/button';
 import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
 import { generateStepsForSubtask } from '@/ai/flows/generate-steps-for-subtask'; 
@@ -15,7 +17,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Terminal, Loader2, ListChecks, Save, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { format } from 'date-fns'; // For date formatting if needed here
+import { format } from 'date-fns'; 
 
 export interface SavedGoal {
   id: string;
@@ -25,6 +27,7 @@ export interface SavedGoal {
 }
 
 export default function TaskWisePage() {
+  const [currentView, setCurrentView] = useState<'tasks' | 'goals'>('tasks');
   const [currentGoalText, setCurrentGoalText] = useState<string>("");
   const [currentSubtasks, setCurrentSubtasks] = useState<ExtendedSubtask[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -115,7 +118,6 @@ export default function TaskWisePage() {
         subtask.id === taskId ? { ...subtask, done: !subtask.done } : subtask
       )
     );
-    // Note: This does not currently update savedGoals. Consider consistency with other operations.
   };
 
   const handleDeleteSubtask = (taskId: string) => {
@@ -133,8 +135,6 @@ export default function TaskWisePage() {
         }
         return goal;
       })
-      // Optionally, filter out goals that become empty of subtasks, though this might be too aggressive.
-      // .filter(goal => goal.subtasks.length > 0) 
     );
 
     toast({
@@ -163,17 +163,6 @@ export default function TaskWisePage() {
         subtask.id === updatedTask.id ? updatedTask : subtask
       )
     );
-     // Note: This does not currently update savedGoals. Consider consistency with other operations.
-    // For consistency with deadline and delete, you might want to update savedGoals here too:
-    // setSavedGoals(prevSavedGoals => 
-    //   prevSavedGoals.map(goal => ({
-    //     ...goal,
-    //     subtasks: goal.subtasks.map(st => 
-    //       st.id === updatedTask.id ? { ...st, ...updatedTask } : st
-    //     )
-    //   }))
-    // );
-
     setIsEditModalOpen(false);
     setSubtaskToEdit(null);
     toast({
@@ -274,90 +263,108 @@ export default function TaskWisePage() {
     setIsDeadlineModalOpen(false); 
     setSubtaskForDeadline(null); 
   };
+  
+  const allGoalStrings = Array.from(
+    new Set([
+      ...(currentGoalText ? [currentGoalText] : []),
+      ...savedGoals.map(sg => sg.mainGoal)
+    ])
+  ).filter(goal => goal.trim() !== '');
 
 
   return (
     <div className="flex flex-col min-h-screen bg-secondary font-sans">
-      <Header />
+      <Header currentView={currentView} setCurrentView={setCurrentView} />
       <div className="flex flex-col items-center flex-grow p-4 md:p-8">
         <main className="w-full max-w-3xl mt-6 md:mt-8 space-y-8">
-          <div style={{ animationDelay: '0.1s', opacity: 0 }} className="animate-fadeIn w-full">
-            <Card className="shadow-lg">
-              <CardContent className="p-6 text-center">
-                <Sparkles className="h-8 w-8 text-primary mx-auto mb-3" />
-                <h2 className="text-xl font-semibold text-foreground mb-2">
-                  Welcome to TaskWise – Your AI-powered daily planner.
-                </h2>
-                <p className="text-muted-foreground">
-                  Turn goals into actionable subtasks with one click.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+          {currentView === 'tasks' && (
+            <>
+              <div style={{ animationDelay: '0.1s', opacity: 0 }} className="animate-fadeIn w-full">
+                <Card className="shadow-lg">
+                  <CardContent className="p-6 text-center">
+                    <Sparkles className="h-8 w-8 text-primary mx-auto mb-3" />
+                    <h2 className="text-xl font-semibold text-foreground mb-2">
+                      Welcome to TaskWise – Your AI-powered daily planner.
+                    </h2>
+                    <p className="text-muted-foreground">
+                      Turn goals into actionable subtasks with one click.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
 
-          <div style={{ animationDelay: '0.3s', opacity: 0 }} className="animate-fadeIn w-full">
-            <GoalInputForm
-              onSubtasksGenerated={handleSubtasksGenerated}
-              setIsLoading={setIsLoading}
-              setError={setError}
-              isLoading={isLoading}
-            />
-          </div>
-
-          {error && !isLoading && (
-            <Alert variant="destructive" className="animate-fadeIn shadow-md" style={{ animationDelay: '0.4s', opacity: 0 }}>
-              <Terminal className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          {isLoading && (
-            <Card className="animate-fadeIn shadow-md" style={{ animationDelay: '0.4s', opacity: 0 }}>
-              <CardContent className="p-6 flex flex-col justify-center items-center">
-                <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
-                <p className="text-lg text-muted-foreground">Generating subtasks, please wait...</p>
-                <p className="text-sm text-muted-foreground">This might take a moment.</p>
-              </CardContent>
-            </Card>
-          )}
-
-          {!isLoading && currentSubtasks.length > 0 && (
-            <Card className="animate-fadeIn shadow-xl" style={{ animationDelay: '0.4s', opacity: 0 }}>
-              <CardHeader>
-                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-                  <CardTitle className="text-2xl text-primary flex items-center">
-                    <ListChecks className="mr-2 h-6 w-6" />
-                    Generated Subtasks
-                  </CardTitle>
-                  <Button
-                    onClick={handleSaveTasks}
-                    className="bg-accent hover:bg-accent/90 text-accent-foreground w-full sm:w-auto"
-                    variant="default"
-                    size="sm"
-                  >
-                    <Save className="mr-2 h-4 w-4" />
-                    Save This Plan
-                  </Button>
-                </div>
-                {currentGoalText && <CardDescription className="mt-2">For your goal: "{currentGoalText}"</CardDescription>}
-              </CardHeader>
-              <CardContent>
-                <SubtaskList
-                  subtasks={currentSubtasks}
-                  onToggleDone={handleToggleSubtaskDone}
-                  onDeleteTask={handleDeleteSubtask}
-                  onEditTask={handleEditSubtask}
-                  onBreakIntoSteps={handleBreakIntoSteps}
-                  onSetDeadline={handleOpenDeadlineModal} 
+              <div style={{ animationDelay: '0.3s', opacity: 0 }} className="animate-fadeIn w-full">
+                <GoalInputForm
+                  onSubtasksGenerated={handleSubtasksGenerated}
+                  setIsLoading={setIsLoading}
+                  setError={setError}
+                  isLoadingGlobal={isLoading}
                 />
-              </CardContent>
-            </Card>
+              </div>
+
+              {error && !isLoading && (
+                <Alert variant="destructive" className="animate-fadeIn shadow-md" style={{ animationDelay: '0.4s', opacity: 0 }}>
+                  <Terminal className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              {isLoading && (
+                <Card className="animate-fadeIn shadow-md" style={{ animationDelay: '0.4s', opacity: 0 }}>
+                  <CardContent className="p-6 flex flex-col justify-center items-center">
+                    <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+                    <p className="text-lg text-muted-foreground">Generating subtasks, please wait...</p>
+                    <p className="text-sm text-muted-foreground">This might take a moment.</p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {!isLoading && currentSubtasks.length > 0 && (
+                <Card className="animate-fadeIn shadow-xl" style={{ animationDelay: '0.4s', opacity: 0 }}>
+                  <CardHeader>
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                      <CardTitle className="text-2xl text-primary flex items-center">
+                        <ListChecks className="mr-2 h-6 w-6" />
+                        Generated Subtasks
+                      </CardTitle>
+                      <Button
+                        onClick={handleSaveTasks}
+                        className="bg-accent hover:bg-accent/90 text-accent-foreground w-full sm:w-auto"
+                        variant="default"
+                        size="sm"
+                      >
+                        <Save className="mr-2 h-4 w-4" />
+                        Save This Plan
+                      </Button>
+                    </div>
+                    {currentGoalText && <CardDescription className="mt-2">For your goal: "{currentGoalText}"</CardDescription>}
+                  </CardHeader>
+                  <CardContent>
+                    <SubtaskList
+                      subtasks={currentSubtasks}
+                      onToggleDone={handleToggleSubtaskDone}
+                      onDeleteTask={handleDeleteSubtask}
+                      onEditTask={handleEditSubtask}
+                      onBreakIntoSteps={handleBreakIntoSteps}
+                      onSetDeadline={handleOpenDeadlineModal} 
+                    />
+                  </CardContent>
+                </Card>
+              )}
+              
+              <div style={{ animationDelay: '0.5s', opacity: 0 }} className="animate-fadeIn w-full">
+                <SavedTasksDisplay savedGoals={savedGoals} setSavedGoals={setSavedGoals} />
+              </div>
+            </>
           )}
-          
-          <div style={{ animationDelay: '0.5s', opacity: 0 }} className="animate-fadeIn w-full">
-            <SavedTasksDisplay savedGoals={savedGoals} setSavedGoals={setSavedGoals} />
-          </div>
+
+          {currentView === 'goals' && (
+            <div style={{ animationDelay: '0.1s', opacity: 0 }} className="animate-fadeIn w-full">
+              <GoalDisplay goals={allGoalStrings} />
+            </div>
+          )}
+
         </main>
         {subtaskToEdit && (
           <EditSubtaskModal

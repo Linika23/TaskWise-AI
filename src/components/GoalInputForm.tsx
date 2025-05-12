@@ -23,7 +23,7 @@ interface GoalInputFormProps {
   onSubtasksGenerated: (goal: string, subtasks: GenerateSubtasksOutput['subtasks']) => void;
   setIsLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  isLoading: boolean;
+  isLoadingGlobal: boolean; // Renamed from isLoading to isLoadingGlobal
 }
 
 const examplePrompts = [
@@ -38,7 +38,7 @@ const examplePrompts = [
 const TYPING_SPEED = 100; // milliseconds per character
 const PROMPT_CHANGE_DELAY = 3000; // milliseconds
 
-export default function GoalInputForm({ onSubtasksGenerated, setIsLoading, setError, isLoading }: GoalInputFormProps) {
+export default function GoalInputForm({ onSubtasksGenerated, setIsLoading, setError, isLoadingGlobal }: GoalInputFormProps) {
   const [goalInput, setGoalInput] = useState('');
   const [animatedPlaceholder, setAnimatedPlaceholder] = useState('');
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
@@ -152,9 +152,9 @@ export default function GoalInputForm({ onSubtasksGenerated, setIsLoading, setEr
             <Button 
               type="submit" 
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-6" 
-              disabled={isLoading || !goalInput.trim()}
+              disabled={isLoadingGlobal || !goalInput.trim()}
             >
-              {isLoading ? (
+              {isLoadingGlobal ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   Generating...

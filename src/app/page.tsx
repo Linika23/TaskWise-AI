@@ -42,9 +42,9 @@ export default function LandingPage() {
         </div>
       </header>
 
-      <main className="flex flex-col items-center justify-center flex-grow w-full p-4 md:p-8 text-center">
+      <main className="flex flex-col items-center justify-center flex-grow w-full p-4 md:p-8 text-center bg-primary text-primary-foreground">
         <div className="w-full max-w-2xl">
-          <Card className="shadow-xl">
+          <Card className="shadow-xl"> {/* Card will use its own theme background, e.g., bg-card */}
             <CardHeader className="pb-4 pt-8">
               <div style={{ animationDelay: '0.1s', opacity: 0 }} className="animate-fadeIn flex flex-col sm:flex-row justify-center items-center mb-2 sm:mb-4">
                 <BrainCircuit data-ai-hint="artificial intelligence brain" className="h-12 w-12 sm:h-16 sm:w-16 text-primary" />
@@ -71,7 +71,7 @@ export default function LandingPage() {
           </Card>
         </div>
       </main>
-      <footer className="text-center py-8 animate-fadeIn" style={{ animationDelay: '0.5s', opacity: 0 }}>
+      <footer className="text-center py-8 animate-fadeIn bg-background" style={{ animationDelay: '0.5s', opacity: 0 }}>
         <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} TaskWise AI. All rights reserved.</p>
       </footer>
     </div>

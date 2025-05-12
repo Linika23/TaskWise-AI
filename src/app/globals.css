@@ -25,8 +25,14 @@
     --accent: 174 100% 29%; /* Teal #009688 */
     --accent-foreground: 0 0% 100%; /* White text on teal */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 4 90% 58%; /* Error Red #F44336 */
+    --destructive-foreground: 0 0% 98%; /* White text on red */
+
+    --success: 122 39% 49%; /* Success Green #4CAF50 */
+    --success-foreground: 0 0% 100%; /* White text on green */
+
+    --warning: 36 100% 50%; /* Warning Orange #FF9800 */
+    --warning-foreground: 0 0% 3.9%; /* Dark text on orange */
 
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
@@ -72,8 +78,14 @@
     --accent: 174 100% 29%; /* Teal #009688 */
     --accent-foreground: 0 0% 100%; /* White text on teal */
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 4 80% 45%; /* Darker Error Red */
+    --destructive-foreground: 0 0% 98%; /* White text on red */
+    
+    --success: 122 35% 40%; /* Darker Success Green */
+    --success-foreground: 0 0% 98%; /* White text on green */
+
+    --warning: 36 90% 42%; /* Darker Warning Orange */
+    --warning-foreground: 0 0% 98%; /* White text on darker orange */
 
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;

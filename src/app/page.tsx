@@ -7,8 +7,10 @@ import GoalInputForm from '@/components/GoalInputForm';
 import SubtaskList, { type ExtendedSubtask } from '@/components/SubtaskList';
 import SavedTasksDisplay from '@/components/SavedTasksDisplay';
 import EditSubtaskModal from '@/components/EditSubtaskModal';
+import StepsDisplayModal from '@/components/StepsDisplayModal'; // Import new modal
 import { Button } from '@/components/ui/button';
 import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
+import { generateStepsForSubtask } from '@/ai/flows/generate-steps-for-subtask'; // Import new flow
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Terminal, Loader2, ListChecks, Save, Sparkles } from "lucide-react";
@@ -31,6 +33,15 @@ export default function TaskWisePage() {
 
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [subtaskToEdit, setSubtaskToEdit] = useState<ExtendedSubtask | null>(null);
+
+  const [isStepsModalOpen, setIsStepsModalOpen] = useState<boolean>(false);
+  const [stepsModalContent, setStepsModalContent] = useState<{
+    taskTitle: string;
+    steps: string[];
+    isLoading: boolean;
+    error?: string | null;
+  } | null>(null);
+
 
   useEffect(() => {
     const storedGoals = localStorage.getItem('taskwise_saved_goals');
@@ -141,11 +152,50 @@ export default function TaskWisePage() {
   };
 
 
-  const handleBreakIntoSteps = (taskId: string) => {
-    toast({
-      title: "Break Into Steps",
-      description: `AI step breakdown for subtask ${taskId.substring(0,8)}... is coming soon!`,
-    });
+  const handleBreakIntoSteps = async (taskId: string) => {
+    const subtask = currentSubtasks.find(st => st.id === taskId);
+    if (!subtask) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Subtask not found.",
+      });
+      return;
+    }
+
+    setStepsModalContent({ taskTitle: subtask.task, steps: [], isLoading: true });
+    setIsStepsModalOpen(true);
+
+    try {
+      const result = await generateStepsForSubtask({ taskTitle: subtask.task });
+      setStepsModalContent({ taskTitle: subtask.task, steps: result.steps, isLoading: false });
+      if (result.steps.length > 0) {
+        toast({
+          title: "Steps Generated!",
+          description: `AI has broken down "${subtask.task.substring(0,30)}..." into steps.`,
+        });
+      } else {
+        toast({
+          title: "No Steps Generated",
+          description: `AI could not break down "${subtask.task.substring(0,30)}..." further.`,
+          variant: "default"
+        });
+      }
+    } catch (err) {
+      console.error("Error generating steps for subtask:", err);
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
+      setStepsModalContent({ 
+        taskTitle: subtask.task, 
+        steps: [], 
+        isLoading: false, 
+        error: `Failed to generate steps. ${errorMessage.substring(0,100)}`
+      });
+      toast({
+        variant: "destructive",
+        title: "Error Generating Steps",
+        description: `Could not generate steps for "${subtask.task.substring(0,30)}...".`,
+      });
+    }
   };
 
   const handleSetDeadline = (taskId: string) => {
@@ -250,6 +300,14 @@ export default function TaskWisePage() {
             onSave={handleUpdateSubtask}
           />
         )}
+        <StepsDisplayModal
+          isOpen={isStepsModalOpen}
+          onClose={() => {
+            setIsStepsModalOpen(false);
+            setStepsModalContent(null);
+          }}
+          content={stepsModalContent}
+        />
         <footer className="text-center py-8 mt-auto animate-fadeIn" style={{ animationDelay: '0.6s', opacity: 0 }}>
           <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} TaskWise. All rights reserved.</p>
         </footer>

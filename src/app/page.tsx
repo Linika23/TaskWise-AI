@@ -81,15 +81,17 @@ export default function TaskWisePage() {
     toast({
       title: "Tasks Saved!",
       description: `Plan for "${currentGoalText.substring(0,50)}..." has been saved.`,
-      className: "bg-accent text-accent-foreground"
+      className: "bg-success text-success-foreground"
     });
   };
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-secondary p-4 md:p-8 font-sans">
-      <Header />
+      <div style={{ animationDelay: '0.1s', opacity: 0 }} className="animate-fadeIn w-full">
+        <Header />
+      </div>
       <main className="w-full max-w-3xl mt-6 md:mt-8 space-y-8">
-        <Card className="shadow-lg">
+        <Card className="animate-fadeIn shadow-lg" style={{ animationDelay: '0.2s', opacity: 0 }}>
           <CardContent className="p-6 text-center">
             <Sparkles className="h-8 w-8 text-primary mx-auto mb-3" />
             <h2 className="text-xl font-semibold text-foreground mb-2">
@@ -101,15 +103,17 @@ export default function TaskWisePage() {
           </CardContent>
         </Card>
 
-        <GoalInputForm
-          onSubtasksGenerated={handleSubtasksGenerated}
-          setIsLoading={setIsLoading}
-          setError={setError}
-          isLoading={isLoading}
-        />
+        <div style={{ animationDelay: '0.3s', opacity: 0 }} className="animate-fadeIn w-full">
+          <GoalInputForm
+            onSubtasksGenerated={handleSubtasksGenerated}
+            setIsLoading={setIsLoading}
+            setError={setError}
+            isLoading={isLoading}
+          />
+        </div>
 
         {error && !isLoading && (
-          <Alert variant="destructive" className="shadow-md">
+          <Alert variant="destructive" className="animate-fadeIn shadow-md" style={{ animationDelay: '0.4s', opacity: 0 }}>
             <Terminal className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
@@ -117,7 +121,7 @@ export default function TaskWisePage() {
         )}
 
         {isLoading && (
-          <Card className="shadow-md">
+          <Card className="animate-fadeIn shadow-md" style={{ animationDelay: '0.4s', opacity: 0 }}>
             <CardContent className="p-6 flex flex-col justify-center items-center">
               <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
               <p className="text-lg text-muted-foreground">Generating subtasks, please wait...</p>
@@ -127,7 +131,7 @@ export default function TaskWisePage() {
         )}
 
         {!isLoading && currentSubtasks.length > 0 && (
-          <Card className="shadow-xl">
+          <Card className="animate-fadeIn shadow-xl" style={{ animationDelay: '0.4s', opacity: 0 }}>
             <CardHeader>
               <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                 <CardTitle className="text-2xl text-primary flex items-center">
@@ -152,9 +156,11 @@ export default function TaskWisePage() {
           </Card>
         )}
         
-        <SavedTasksDisplay savedGoals={savedGoals} setSavedGoals={setSavedGoals} />
+        <div style={{ animationDelay: '0.5s', opacity: 0 }} className="animate-fadeIn w-full">
+          <SavedTasksDisplay savedGoals={savedGoals} setSavedGoals={setSavedGoals} />
+        </div>
       </main>
-      <footer className="text-center py-8 mt-auto">
+      <footer className="text-center py-8 mt-auto animate-fadeIn" style={{ animationDelay: '0.6s', opacity: 0 }}>
         <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} TaskWise. All rights reserved.</p>
       </footer>
     </div>

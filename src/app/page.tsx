@@ -11,7 +11,7 @@ import StepsDisplayModal from '@/components/StepsDisplayModal';
 import DeadlinePickerModal from '@/components/DeadlinePickerModal';
 import GoalDisplay from '@/components/GoalDisplay';
 import AddGoalModal, { type AddGoalFormValues } from '@/components/AddGoalModal';
-import FullCalendarDisplay from '@/components/FullCalendarDisplay'; // Import FullCalendarDisplay
+import FullCalendarDisplay from '@/components/FullCalendarDisplay';
 import { Button } from '@/components/ui/button';
 import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
 import { generateStepsForSubtask } from '@/ai/flows/generate-steps-for-subtask'; 
@@ -436,7 +436,7 @@ export default function TaskWisePage() {
 
           {currentView === 'calendar' && (
             <div style={{ animationDelay: '0.1s', opacity: 0 }} className="animate-fadeIn w-full">
-              <FullCalendarDisplay />
+              <FullCalendarDisplay currentSubtasks={currentSubtasks} savedGoals={savedGoals} />
             </div>
           )}
 

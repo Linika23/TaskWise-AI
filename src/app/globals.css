@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -127,4 +128,38 @@
   .animate-fadeIn {
     animation: fadeIn 0.5s ease-out forwards;
   }
+
+  .deadline-highlighted {
+    position: relative;
+  }
+
+  .deadline-highlighted::after {
+    content: '';
+    position: absolute;
+    bottom: 4px; /* Adjust for vertical position */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px; /* Size of the dot */
+    height: 6px; /* Size of the dot */
+    border-radius: 50%;
+    background-color: hsl(var(--primary)); /* Dot color using primary theme color */
+    z-index: 1; 
+  }
+
+  /* Adjust dot color for selected day for better visibility */
+  .deadline-highlighted.rdp-day_selected::after,
+  .deadline-highlighted[aria-selected="true"]::after {
+    background-color: hsl(var(--primary-foreground)); 
+  }
+
+  /* Adjust dot color for today if it's not selected */
+  .deadline-highlighted.rdp-day_today:not([aria-selected="true"])::after {
+    background-color: hsl(var(--accent-foreground)); 
+  }
+  
+  /* If today is also selected and has a deadline, the selected style should take precedence for the dot */
+   .deadline-highlighted.rdp-day_today[aria-selected="true"]::after {
+    background-color: hsl(var(--primary-foreground));
+  }
+
 }

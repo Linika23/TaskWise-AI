@@ -4,7 +4,7 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardDescription, CardTitle } from '@/components/ui/card';
-import { BrainCircuit, Target, Sparkles, CalendarPlus, ListChecks, HelpCircle, Lock, Lightbulb } from 'lucide-react';
+import { BrainCircuit, Target, Sparkles, CalendarPlus, ListChecks, HelpCircle, Lock, Lightbulb, SearchCheck, Edit, CalendarClockIcon } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -105,6 +105,43 @@ export default function LandingPage() {
                 >
                   Get Started
                 </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="flex flex-col items-center justify-center w-full p-4 py-12 md:p-8 md:py-20 bg-background text-foreground">
+          <div className="w-full max-w-5xl">
+            <Card className="shadow-xl animate-fadeIn bg-card text-card-foreground" style={{ animationDelay: '0.2s', opacity: 0 }}>
+              <CardHeader className="text-center pb-4">
+                <CardTitle className="text-3xl md:text-4xl font-bold text-primary">Core Features</CardTitle>
+                <CardDescription className="text-lg text-muted-foreground mt-2">
+                  Discover how TaskWise AI enhances your productivity.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
+                <Card className="flex flex-col items-center p-6 bg-background/80 dark:bg-background/30 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center">
+                  <SearchCheck className="h-12 w-12 text-primary mb-4" data-ai-hint="task breakdown" />
+                  <h3 className="text-xl font-semibold text-card-foreground mb-2">Smart Task Breakdown</h3>
+                  <p className="text-sm text-muted-foreground">
+                    AI breaks down your complex goals into simple, actionable tasks, making it easy to get started.
+                  </p>
+                </Card>
+                <Card className="flex flex-col items-center p-6 bg-background/80 dark:bg-background/30 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center">
+                  <Edit className="h-12 w-12 text-primary mb-4" data-ai-hint="goal tracking" />
+                  <h3 className="text-xl font-semibold text-card-foreground mb-2">Goal Tracker</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Easily track both your short-term and long-term goals, keeping your ambitions in sight.
+                  </p>
+                </Card>
+                <Card className="flex flex-col items-center p-6 bg-background/80 dark:bg-background/30 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center">
+                  <CalendarClockIcon className="h-12 w-12 text-primary mb-4" data-ai-hint="calendar reminders" />
+                  <h3 className="text-xl font-semibold text-card-foreground mb-2">Deadline Calendar</h3>
+                  <p className="text-sm text-muted-foreground">
+                    A visual calendar with smart reminders helps you stay on top of your deadlines.
+                  </p>
+                </Card>
               </CardContent>
             </Card>
           </div>

@@ -5,19 +5,17 @@
  * - generateSubtasks - A function that generates subtasks with estimated time allocations.
  * - GenerateSubtasksInput - The input type for the generateSubtasks function.
  * - GenerateSubtasksOutput - The return type for the generateSubtasks function.
- * - GenerateSubtasksInputSchema - The Zod schema for the input.
- * - GenerateSubtasksOutputSchema - The Zod schema for the output.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export const GenerateSubtasksInputSchema = z.object({
+const GenerateSubtasksInputSchema = z.object({
   goal: z.string().describe('The goal or task to break down into subtasks.'),
 });
 export type GenerateSubtasksInput = z.infer<typeof GenerateSubtasksInputSchema>;
 
-export const GenerateSubtasksOutputSchema = z.object({
+const GenerateSubtasksOutputSchema = z.object({
   subtasks: z
     .array(
       z.object({

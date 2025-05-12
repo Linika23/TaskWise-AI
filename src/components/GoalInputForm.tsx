@@ -24,22 +24,41 @@ const examplePrompts = [
   "Organize my digital files",
 ];
 
+const TYPING_SPEED = 100; // milliseconds per character
+const PROMPT_CHANGE_DELAY = 3000; // milliseconds
+
 export default function GoalInputForm({ onSubtasksGenerated, setIsLoading, setError, isLoading }: GoalInputFormProps) {
   const [goalInput, setGoalInput] = useState('');
-  const [animatedPlaceholder, setAnimatedPlaceholder] = useState(examplePrompts[0]);
+  const [animatedPlaceholder, setAnimatedPlaceholder] = useState('');
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
+  const [currentCharIndex, setCurrentCharIndex] = useState(0);
+  const [isTyping, setIsTyping] = useState(true);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
+    const promptChangeInterval = setInterval(() => {
       setCurrentPromptIndex((prevIndex) => (prevIndex + 1) % examplePrompts.length);
-    }, 3000); // Change prompt every 3 seconds
+      setCurrentCharIndex(0);
+      setAnimatedPlaceholder('');
+      setIsTyping(true);
+    }, PROMPT_CHANGE_DELAY + examplePrompts[currentPromptIndex].length * TYPING_SPEED + 500); // Add a small pause after typing
 
-    return () => clearInterval(intervalId);
-  }, []);
+    return () => clearInterval(promptChangeInterval);
+  }, [currentPromptIndex]);
 
   useEffect(() => {
-    setAnimatedPlaceholder(examplePrompts[currentPromptIndex]);
-  }, [currentPromptIndex]);
+    if (!isTyping) return;
+
+    if (currentCharIndex < examplePrompts[currentPromptIndex].length) {
+      const typingInterval = setTimeout(() => {
+        setAnimatedPlaceholder((prev) => prev + examplePrompts[currentPromptIndex][currentCharIndex]);
+        setCurrentCharIndex((prev) => prev + 1);
+      }, TYPING_SPEED);
+      return () => clearTimeout(typingInterval);
+    } else {
+      setIsTyping(false); // Finished typing current prompt
+    }
+  }, [currentPromptIndex, currentCharIndex, isTyping]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +89,7 @@ export default function GoalInputForm({ onSubtasksGenerated, setIsLoading, setEr
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Textarea
-            placeholder={animatedPlaceholder}
+            placeholder={animatedPlaceholder + (isTyping ? '|' : '')} // Add cursor effect
             value={goalInput}
             onChange={(e) => setGoalInput(e.target.value)}
             className="min-h-[100px] text-base focus:ring-primary transition-all duration-300 ease-in-out"

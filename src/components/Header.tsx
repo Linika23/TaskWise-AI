@@ -16,18 +16,21 @@ export default function Header({ currentView, setCurrentView }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 w-full bg-background shadow-md py-4 md:py-6">
       <div className="container mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Left side: "My Tasks" button which can also serve as the main navigation for the "tasks" view */}
+        {/* Left side: Brand name "TaskWise AI" linking to 'tasks' view */}
         <Button
           variant="ghost"
           onClick={() => setCurrentView('tasks')}
           className={cn(
             "flex items-center text-xl md:text-2xl font-bold p-2 h-auto",
-            currentView === 'tasks' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
+            currentView === 'tasks' 
+              ? 'text-primary bg-primary/10' 
+              : 'text-foreground hover:text-primary hover:bg-primary/5'
           )}
           aria-pressed={currentView === 'tasks'}
+          aria-label="TaskWise AI Home"
         >
-          <BrainCircuit className="h-7 w-7 md:h-8 md:w-8 mr-2" />
-          My Tasks
+          <BrainCircuit className="h-7 w-7 md:h-8 md:w-8 mr-2 text-primary" /> {/* Icon always primary color */}
+          TaskWise AI
         </Button>
         
         {/* Right side: Icon buttons for "My Goals", "Calendar", and Theme Toggle */}

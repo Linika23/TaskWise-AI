@@ -11,7 +11,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'TaskWise - Smart Productivity',
+  title: 'TaskWise AI - Smart Productivity',
   description: 'Input goals, get AI-generated subtasks, and boost your productivity.',
 };
 

@@ -331,10 +331,10 @@ export default function TaskWisePage() {
                   <CardContent className="p-6 text-center">
                     <Sparkles className="h-8 w-8 text-primary mx-auto mb-3" />
                     <h2 className="text-xl font-semibold text-foreground mb-2">
-                      Welcome to TaskWise – Your AI-powered daily planner.
+                       Welcome to TaskWise AI – Your smart productivity partner.
                     </h2>
                     <p className="text-muted-foreground">
-                      Turn goals into actionable subtasks with one click.
+                      Input goals, get AI-generated subtasks, and manage your day effectively.
                     </p>
                   </CardContent>
                 </Card>
@@ -475,7 +475,7 @@ export default function TaskWisePage() {
           onAddGoal={handleAddNewGoal}
         />
         <footer className="text-center py-8 mt-auto animate-fadeIn" style={{ animationDelay: '0.6s', opacity: 0 }}>
-          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} TaskWise. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} TaskWise AI. All rights reserved.</p>
         </footer>
       </div>
     </div>

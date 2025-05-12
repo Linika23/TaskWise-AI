@@ -111,7 +111,7 @@ export default function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section className="flex flex-col items-center justify-center w-full p-4 py-12 md:p-8 md:py-20 bg-background text-foreground">
+        <section className="flex flex-col items-center justify-center w-full p-4 py-12 md:p-8 md:py-20 bg-primary text-primary-foreground">
           <div className="w-full max-w-5xl">
             <Card className="shadow-xl animate-fadeIn bg-card text-card-foreground" style={{ animationDelay: '0.2s', opacity: 0 }}>
               <CardHeader className="text-center pb-4">

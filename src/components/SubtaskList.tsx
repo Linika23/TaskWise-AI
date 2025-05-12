@@ -1,17 +1,12 @@
 
-import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
+
+import type { ExtendedSubtask } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Clock, Edit3, Trash2, Sparkles as AiIcon, CalendarPlus, CalendarClock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-
-export type ExtendedSubtask = GenerateSubtasksOutput['subtasks'][0] & {
-  id: string;
-  done: boolean;
-  deadline?: string; // Optional deadline string (ISO format)
-};
 
 interface SubtaskListProps {
   subtasks: ExtendedSubtask[];

@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import type { ExtendedSubtask } from './SubtaskList';
+import type { ExtendedSubtask } from '@/types';
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {

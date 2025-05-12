@@ -4,12 +4,12 @@
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import GoalInputForm from '@/components/GoalInputForm';
-import SubtaskList, { type ExtendedSubtask } from '@/components/SubtaskList';
+import SubtaskList from '@/components/SubtaskList';
 import SavedTasksDisplay from '@/components/SavedTasksDisplay';
 import EditSubtaskModal from '@/components/EditSubtaskModal';
 import StepsDisplayModal from '@/components/StepsDisplayModal'; 
 import DeadlinePickerModal from '@/components/DeadlinePickerModal';
-import GoalDisplay from '@/components/GoalDisplay'; // Import GoalDisplay
+import GoalDisplay from '@/components/GoalDisplay';
 import { Button } from '@/components/ui/button';
 import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
 import { generateStepsForSubtask } from '@/ai/flows/generate-steps-for-subtask'; 
@@ -18,13 +18,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Terminal, Loader2, ListChecks, Save, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns'; 
+import type { TrackedGoal, SavedGoal, ExtendedSubtask } from '@/types';
 
-export interface SavedGoal {
-  id: string;
-  mainGoal: string;
-  subtasks: ExtendedSubtask[]; 
-  savedAt: string;
-}
+// Sample tracked goals for initial display if localStorage is empty
+const sampleTrackedGoals: TrackedGoal[] = [
+  { id: 'tg1', title: 'Learn Next.js App Router', description: 'Complete a tutorial and build a small app focused on new routing features, ensuring all core concepts are understood.', type: 'short', targetDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), completed: false },
+  { id: 'tg2', title: 'Finish Q2 Project Proposal', description: 'Draft the initial proposal, gather feedback from stakeholders, revise, and submit the final version before the Q2 deadline.', type: 'short', targetDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), completed: true },
+  { id: 'tg3', title: 'Run a Half Marathon', description: 'Follow a 12-week training plan consistently, focusing on endurance and pace, to successfully complete a half marathon.', type: 'long', targetDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(), completed: false },
+  { id: 'tg4', title: 'Read 12 Books This Year', description: 'Aim to read at least one book per month, covering a diverse range of genres including fiction, non-fiction, and technical books.', type: 'long', targetDate: new Date(new Date().getFullYear(), 11, 31).toISOString(), completed: false },
+];
+
 
 export default function TaskWisePage() {
   const [currentView, setCurrentView] = useState<'tasks' | 'goals'>('tasks');
@@ -33,6 +36,7 @@ export default function TaskWisePage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [savedGoals, setSavedGoals] = useState<SavedGoal[]>([]);
+  const [trackedGoals, setTrackedGoals] = useState<TrackedGoal[]>([]);
   const { toast } = useToast();
 
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
@@ -60,6 +64,20 @@ export default function TaskWisePage() {
         localStorage.removeItem('taskwise_saved_goals'); 
       }
     }
+
+    const storedTrackedGoals = localStorage.getItem('taskwise_tracked_goals');
+    if (storedTrackedGoals) {
+      try {
+        const parsedTrackedGoals = JSON.parse(storedTrackedGoals);
+        setTrackedGoals(parsedTrackedGoals);
+      } catch (e) {
+        console.error("Failed to parse tracked goals from localStorage", e);
+        localStorage.removeItem('taskwise_tracked_goals');
+        setTrackedGoals(sampleTrackedGoals); 
+      }
+    } else {
+      setTrackedGoals(sampleTrackedGoals);
+    }
   }, []);
 
   useEffect(() => {
@@ -67,6 +85,13 @@ export default function TaskWisePage() {
         localStorage.setItem('taskwise_saved_goals', JSON.stringify(savedGoals));
     }
   }, [savedGoals]);
+
+  useEffect(() => {
+    // Check if trackedGoals is not the initial sample to prevent overwriting on first load if empty
+    if (trackedGoals !== sampleTrackedGoals || localStorage.getItem('taskwise_tracked_goals')) {
+        localStorage.setItem('taskwise_tracked_goals', JSON.stringify(trackedGoals));
+    }
+  }, [trackedGoals]);
 
   const handleSubtasksGenerated = (goalText: string, subtasksFromAI: GenerateSubtasksOutput['subtasks']) => {
     setCurrentGoalText(goalText);
@@ -264,13 +289,13 @@ export default function TaskWisePage() {
     setSubtaskForDeadline(null); 
   };
   
-  const allGoalStrings = Array.from(
-    new Set([
-      ...(currentGoalText ? [currentGoalText] : []),
-      ...savedGoals.map(sg => sg.mainGoal)
-    ])
-  ).filter(goal => goal.trim() !== '');
-
+  const handleToggleTrackedGoalComplete = (goalId: string) => {
+    setTrackedGoals(prevTrackedGoals =>
+      prevTrackedGoals.map(goal =>
+        goal.id === goalId ? { ...goal, completed: !goal.completed } : goal
+      )
+    );
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-secondary font-sans">
@@ -361,7 +386,7 @@ export default function TaskWisePage() {
 
           {currentView === 'goals' && (
             <div style={{ animationDelay: '0.1s', opacity: 0 }} className="animate-fadeIn w-full">
-              <GoalDisplay goals={allGoalStrings} />
+              <GoalDisplay goals={trackedGoals} onToggleComplete={handleToggleTrackedGoalComplete} />
             </div>
           )}
 

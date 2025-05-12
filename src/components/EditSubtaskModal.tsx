@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { ExtendedSubtask } from './SubtaskList';
+import type { ExtendedSubtask } from '@/types';
 import {
   Dialog,
   DialogContent,

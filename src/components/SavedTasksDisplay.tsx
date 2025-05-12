@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { SavedGoal } from '@/app/page'; 
+import type { SavedGoal, ExtendedSubtask } from '@/types'; 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from '@/lib/utils';
-import type { ExtendedSubtask } from './SubtaskList';
 import { format } from 'date-fns';
 
 interface SavedTasksDisplayProps {

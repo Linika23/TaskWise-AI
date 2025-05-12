@@ -5,6 +5,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import { BrainCircuit, CalendarDays, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface HeaderProps {
   currentView: 'tasks' | 'goals';
@@ -29,34 +30,33 @@ export default function Header({ currentView, setCurrentView }: HeaderProps) {
           My Tasks
         </Button>
         
-        {/* Right side: Icon buttons for "My Goals" and "Calendar" */}
+        {/* Right side: Icon buttons for "My Goals", "Calendar", and Theme Toggle */}
         <div className="flex items-center space-x-1 sm:space-x-2">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setCurrentView('goals')}
             className={cn(
-              "p-2 hover:bg-primary/10", // Ensure consistent padding for icon buttons
+              "p-2 hover:bg-primary/10", 
               currentView === 'goals' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-primary'
             )}
             aria-label="My Goals"
             aria-pressed={currentView === 'goals'}
           >
-            <Target className="h-6 w-6" /> {/* Icon size as requested */}
+            <Target className="h-6 w-6" /> 
           </Button>
           <Button 
             variant="ghost" 
             size="icon" 
-            className="text-muted-foreground hover:text-primary hover:bg-primary/10 p-2" // Ensure consistent padding
+            className="text-muted-foreground hover:text-primary hover:bg-primary/10 p-2" 
             aria-label="Calendar View (Placeholder)"
-            // Consider adding onClick for placeholder functionality or disabling if not ready
             // onClick={() => alert("Calendar View Coming Soon!")} 
           >
-            <CalendarDays className="h-6 w-6" /> {/* Icon size as requested */}
+            <CalendarDays className="h-6 w-6" /> 
           </Button>
+          <ThemeToggle />
         </div>
       </div>
     </header>
   );
 }
-

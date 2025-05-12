@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Header from '@/components/Header';
 import GoalInputForm from '@/components/GoalInputForm';
 import SubtaskList from '@/components/SubtaskList';
@@ -17,7 +17,7 @@ import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
 import { generateStepsForSubtask } from '@/ai/flows/generate-steps-for-subtask'; 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Terminal, Loader2, ListChecks, Save, Sparkles, PlusCircle } from "lucide-react";
+import { Terminal, Loader2, ListChecks, Save, Sparkles, PlusCircle, BrainCircuit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns'; 
 import type { TrackedGoal, SavedGoal, ExtendedSubtask } from '@/types';
@@ -56,6 +56,8 @@ export default function TaskWisePage() {
   const [subtaskForDeadline, setSubtaskForDeadline] = useState<ExtendedSubtask | null>(null);
 
   const [isAddGoalModalOpen, setIsAddGoalModalOpen] = useState<boolean>(false);
+
+  const goalInputSectionRef = useRef<HTMLDivElement>(null);
 
 
   useEffect(() => {
@@ -319,6 +321,10 @@ export default function TaskWisePage() {
     });
   };
 
+  const handleGetStartedClick = () => {
+    goalInputSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-secondary font-sans">
       <Header currentView={currentView} setCurrentView={setCurrentView} />
@@ -327,20 +333,32 @@ export default function TaskWisePage() {
           {currentView === 'tasks' && (
             <>
               <div style={{ animationDelay: '0.1s', opacity: 0 }} className="animate-fadeIn w-full">
-                <Card className="shadow-lg">
-                  <CardContent className="p-6 text-center">
-                    <Sparkles className="h-8 w-8 text-primary mx-auto mb-3" />
-                    <h2 className="text-xl font-semibold text-foreground mb-2">
-                       Welcome to TaskWise AI – Your smart productivity partner.
-                    </h2>
-                    <p className="text-muted-foreground">
-                      Input goals, get AI-generated subtasks, and manage your day effectively.
+                <Card className="shadow-xl text-center">
+                  <CardHeader className="pb-4">
+                    <div className="flex flex-col sm:flex-row justify-center items-center mb-2 sm:mb-4">
+                      <BrainCircuit className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
+                      <h1 className="text-3xl sm:text-4xl font-bold ml-2 sm:ml-3 text-foreground">TaskWise AI</h1>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4 sm:space-y-6 px-4 pb-6">
+                    <p className="text-xl sm:text-2xl text-foreground font-medium">
+                      Smarter Planning. Powered by AI.
                     </p>
+                    <p className="text-sm sm:text-md text-muted-foreground max-w-lg mx-auto">
+                      Turn your ambitious goals into actionable subtasks with a single click. Let our AI streamline your workflow and boost your productivity.
+                    </p>
+                    <Button 
+                      size="lg" 
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground text-md sm:text-lg py-3 px-6 sm:px-8"
+                      onClick={handleGetStartedClick}
+                    >
+                      Get Started
+                    </Button>
                   </CardContent>
                 </Card>
               </div>
 
-              <div style={{ animationDelay: '0.2s', opacity: 0 }} className="animate-fadeIn w-full">
+              <div ref={goalInputSectionRef} style={{ animationDelay: '0.2s', opacity: 0 }} className="animate-fadeIn w-full">
                 <GoalInputForm
                   onSubtasksGenerated={handleSubtasksGenerated}
                   setIsLoading={setIsLoading}

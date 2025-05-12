@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Terminal, Loader2, ListChecks, Save } from "lucide-react";
+import { Terminal, Loader2, ListChecks, Save, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export interface SavedGoal {
@@ -89,11 +89,23 @@ export default function TaskWisePage() {
     <div className="flex flex-col items-center min-h-screen bg-secondary p-4 md:p-8 font-sans">
       <Header />
       <main className="w-full max-w-3xl mt-6 md:mt-8 space-y-8">
+        <Card className="shadow-lg">
+          <CardContent className="p-6 text-center">
+            <Sparkles className="h-8 w-8 text-primary mx-auto mb-3" />
+            <h2 className="text-xl font-semibold text-foreground mb-2">
+              Welcome to TaskWise – Your AI-powered daily planner.
+            </h2>
+            <p className="text-muted-foreground">
+              Turn goals into actionable subtasks with one click.
+            </p>
+          </CardContent>
+        </Card>
+
         <GoalInputForm
           onSubtasksGenerated={handleSubtasksGenerated}
           setIsLoading={setIsLoading}
           setError={setError}
-          isLoading={isLoading} // Pass isLoading state
+          isLoading={isLoading}
         />
 
         {error && !isLoading && (

@@ -10,12 +10,13 @@ import EditSubtaskModal from '@/components/EditSubtaskModal';
 import StepsDisplayModal from '@/components/StepsDisplayModal'; 
 import DeadlinePickerModal from '@/components/DeadlinePickerModal';
 import GoalDisplay from '@/components/GoalDisplay';
+import AddGoalModal, { type AddGoalFormValues } from '@/components/AddGoalModal'; // Import AddGoalModal
 import { Button } from '@/components/ui/button';
 import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
 import { generateStepsForSubtask } from '@/ai/flows/generate-steps-for-subtask'; 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Terminal, Loader2, ListChecks, Save, Sparkles } from "lucide-react";
+import { Terminal, Loader2, ListChecks, Save, Sparkles, PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns'; 
 import type { TrackedGoal, SavedGoal, ExtendedSubtask } from '@/types';
@@ -52,6 +53,8 @@ export default function TaskWisePage() {
 
   const [isDeadlineModalOpen, setIsDeadlineModalOpen] = useState<boolean>(false);
   const [subtaskForDeadline, setSubtaskForDeadline] = useState<ExtendedSubtask | null>(null);
+
+  const [isAddGoalModalOpen, setIsAddGoalModalOpen] = useState<boolean>(false);
 
 
   useEffect(() => {
@@ -297,6 +300,24 @@ export default function TaskWisePage() {
     );
   };
 
+  const handleAddNewGoal = (data: AddGoalFormValues) => {
+    const newGoal: TrackedGoal = {
+      id: crypto.randomUUID(),
+      title: data.title,
+      description: data.description,
+      type: data.type,
+      targetDate: data.targetDate.toISOString(),
+      completed: false,
+    };
+    setTrackedGoals(prev => [newGoal, ...prev].sort((a, b) => new Date(a.targetDate).getTime() - new Date(b.targetDate).getTime()));
+    setIsAddGoalModalOpen(false);
+    toast({ 
+      title: "New Goal Added!", 
+      description: `"${data.title.substring(0,50)}..." has been added to your goals.`,
+      className: "bg-success text-success-foreground"
+    });
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-secondary font-sans">
       <Header currentView={currentView} setCurrentView={setCurrentView} />
@@ -385,9 +406,20 @@ export default function TaskWisePage() {
           )}
 
           {currentView === 'goals' && (
-            <div style={{ animationDelay: '0.1s', opacity: 0 }} className="animate-fadeIn w-full">
-              <GoalDisplay goals={trackedGoals} onToggleComplete={handleToggleTrackedGoalComplete} />
-            </div>
+            <>
+              <div style={{ animationDelay: '0.1s', opacity: 0 }} className="animate-fadeIn w-full mb-6">
+                 <Button 
+                    onClick={() => setIsAddGoalModalOpen(true)}
+                    className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3"
+                  >
+                    <PlusCircle className="mr-2 h-5 w-5" />
+                    Add New Goal
+                  </Button>
+              </div>
+              <div style={{ animationDelay: '0.2s', opacity: 0 }} className="animate-fadeIn w-full">
+                <GoalDisplay goals={trackedGoals} onToggleComplete={handleToggleTrackedGoalComplete} />
+              </div>
+            </>
           )}
 
         </main>
@@ -419,6 +451,11 @@ export default function TaskWisePage() {
           subtask={subtaskForDeadline}
           onSaveDeadline={handleSaveNewDeadline}
         />
+        <AddGoalModal
+          isOpen={isAddGoalModalOpen}
+          onClose={() => setIsAddGoalModalOpen(false)}
+          onAddGoal={handleAddNewGoal}
+        />
         <footer className="text-center py-8 mt-auto animate-fadeIn" style={{ animationDelay: '0.6s', opacity: 0 }}>
           <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} TaskWise. All rights reserved.</p>
         </footer>
@@ -426,3 +463,4 @@ export default function TaskWisePage() {
     </div>
   );
 }
+

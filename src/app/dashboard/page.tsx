@@ -503,7 +503,7 @@ export default function DashboardPage() {
           onAddGoal={handleAddNewGoal}
         />
         {/* <FloatingChatbotButton /> Removed */}
-        <footer className="text-center py-8 mt-auto animate-fadeIn" style={{ animationDelay: '0.5s', opacity: 0 }}>
+        <footer className="text-center py-8 mt-auto animate-fadeIn bg-background border-t border-border" style={{ animationDelay: '0.5s', opacity: 0 }}>
           <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} TaskWise AI. All rights reserved.</p>
         </footer>
       </div>

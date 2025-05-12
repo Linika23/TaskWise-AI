@@ -2,7 +2,7 @@
 "use client";
 
 import type { Dispatch, SetStateAction } from 'react';
-import { BrainCircuit, CalendarDays, Target } from 'lucide-react';
+import { BrainCircuit, CalendarDays, Target, Home } from 'lucide-react'; // Added Home icon
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -22,19 +22,30 @@ export default function Header({ currentView, setCurrentView }: HeaderProps) {
           onClick={() => setCurrentView('tasks')}
           className={cn(
             "flex items-center text-xl md:text-2xl font-bold p-2 h-auto",
-            currentView === 'tasks' 
-              ? 'text-primary bg-primary/10' 
-              : 'text-foreground hover:text-primary hover:bg-primary/5'
+            // Removed active state based on currentView === 'tasks' as the new Home icon will handle this
+            'text-foreground hover:text-primary hover:bg-primary/5'
           )}
-          aria-pressed={currentView === 'tasks'}
           aria-label="TaskWise AI Home"
         >
           <BrainCircuit className="h-7 w-7 md:h-8 md:w-8 mr-2 text-primary" /> {/* Icon always primary color */}
           TaskWise AI
         </Button>
         
-        {/* Right side: Icon buttons for "My Goals", "Calendar", and Theme Toggle */}
+        {/* Right side: Icon buttons for "Home", "My Goals", "Calendar", and Theme Toggle */}
         <div className="flex items-center space-x-1 sm:space-x-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setCurrentView('tasks')}
+            className={cn(
+              "p-2 hover:bg-primary/10", 
+              currentView === 'tasks' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-primary'
+            )}
+            aria-label="Home"
+            aria-pressed={currentView === 'tasks'}
+          >
+            <Home className="h-6 w-6" /> 
+          </Button>
           <Button
             variant="ghost"
             size="icon"
@@ -67,3 +78,4 @@ export default function Header({ currentView, setCurrentView }: HeaderProps) {
     </header>
   );
 }
+

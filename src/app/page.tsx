@@ -339,7 +339,7 @@ export default function TaskWisePage() {
                 </Card>
               </div>
 
-              <div style={{ animationDelay: '0.3s', opacity: 0 }} className="animate-fadeIn w-full">
+              <div style={{ animationDelay: '0.2s', opacity: 0 }} className="animate-fadeIn w-full">
                 <GoalInputForm
                   onSubtasksGenerated={handleSubtasksGenerated}
                   setIsLoading={setIsLoading}
@@ -347,6 +347,17 @@ export default function TaskWisePage() {
                   isLoadingGlobal={isLoading}
                 />
               </div>
+              
+              <div style={{ animationDelay: '0.3s', opacity: 0 }} className="animate-fadeIn w-full text-center mt-6">
+                <Button
+                    onClick={() => setIsAddGoalModalOpen(true)}
+                    className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground text-md py-3"
+                  >
+                    <PlusCircle className="mr-2 h-5 w-5" />
+                    Add to My Goals
+                  </Button>
+              </div>
+
 
               {error && !isLoading && (
                 <Alert variant="destructive" className="animate-fadeIn shadow-md" style={{ animationDelay: '0.4s', opacity: 0 }}>

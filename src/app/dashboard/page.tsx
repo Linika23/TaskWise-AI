@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -12,13 +11,12 @@ import DeadlinePickerModal from '@/components/DeadlinePickerModal';
 import GoalDisplay from '@/components/GoalDisplay';
 import AddGoalModal, { type AddGoalFormValues } from '@/components/AddGoalModal';
 import FullCalendarDisplay from '@/components/FullCalendarDisplay';
-// import FloatingChatbotButton from '@/components/FloatingChatbotButton'; // Removed
 import { Button } from '@/components/ui/button';
 import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
 import { generateStepsForSubtask } from '@/ai/flows/generate-steps-for-subtask'; 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Terminal, Loader2, ListChecks, Save, PlusCircle, Rocket } from "lucide-react"; // Added Rocket
+import { Terminal, Loader2, ListChecks, Save, PlusCircle, Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { TrackedGoal, SavedGoal, ExtendedSubtask } from '@/types';
 
@@ -359,8 +357,10 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col min-h-screen bg-secondary font-sans">
       <Header currentView={currentView} setCurrentView={setCurrentView} />
-      <div className="flex flex-col items-center flex-grow p-4 md:p-8">
-        <main className="w-full max-w-3xl mt-6 md:mt-8 space-y-8">
+      {/* Content Wrapper: Removed padding p-4 md:p-8 */}
+      <div className="flex flex-col items-center flex-grow">
+        {/* Main content area: Added padding p-4 md:p-8 */}
+        <main className="w-full max-w-3xl mt-6 md:mt-8 space-y-8 p-4 md:p-8">
           {currentView === 'tasks' && (
             <>
               <Card className="shadow-xl w-full animate-fadeIn" style={{ animationDelay: '0s', opacity: 0 }}>
@@ -502,7 +502,6 @@ export default function DashboardPage() {
           onClose={() => setIsAddGoalModalOpen(false)}
           onAddGoal={handleAddNewGoal}
         />
-        {/* <FloatingChatbotButton /> Removed */}
         <footer className="w-full text-center py-6 mt-auto animate-fadeIn bg-background border-t border-border" style={{ animationDelay: '0.5s', opacity: 0 }}>
           <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} TaskWise AI. All rights reserved.</p>
         </footer>
@@ -510,4 +509,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

@@ -6,17 +6,32 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { BrainCircuit } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useEffect, useState } from 'react';
 
+const CATCHY_TAGLINE = "Smarter Planning. Powered by AI.";
+const TYPING_SPEED_TAGLINE = 100; // milliseconds per character
 
 export default function LandingPage() {
   const router = useRouter();
+  const [animatedTagline, setAnimatedTagline] = useState('');
+  const [taglineCharIndex, setTaglineCharIndex] = useState(0);
+
+  useEffect(() => {
+    if (taglineCharIndex < CATCHY_TAGLINE.length) {
+      const typingInterval = setTimeout(() => {
+        setAnimatedTagline((prev) => prev + CATCHY_TAGLINE[taglineCharIndex]);
+        setTaglineCharIndex((prev) => prev + 1);
+      }, TYPING_SPEED_TAGLINE);
+      return () => clearTimeout(typingInterval);
+    }
+  }, [taglineCharIndex]);
 
   const handleGetStarted = () => {
     router.push('/dashboard');
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-secondary font-sans">
+    <div className="flex flex-col min-h-screen w-full bg-secondary font-sans">
       <header className="sticky top-0 z-50 w-full bg-background shadow-md">
         <div className="container mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 md:py-4">
           <div className="flex items-center text-xl md:text-2xl font-bold text-foreground">
@@ -27,7 +42,7 @@ export default function LandingPage() {
         </div>
       </header>
 
-      <main className="flex flex-col items-center justify-center flex-grow p-4 md:p-8 text-center">
+      <main className="flex flex-col items-center justify-center flex-grow w-full p-4 md:p-8 text-center">
         <div className="w-full max-w-2xl">
           <Card className="shadow-xl">
             <CardHeader className="pb-4 pt-8">
@@ -37,8 +52,9 @@ export default function LandingPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-5 sm:space-y-6 px-4 pb-8">
-              <p style={{ animationDelay: '0.2s', opacity: 0 }} className="animate-fadeIn text-2xl sm:text-3xl text-foreground font-semibold">
-                Smarter Planning. Powered by AI.
+              <p  className="text-2xl sm:text-3xl text-foreground font-semibold min-h-[2.25em] sm:min-h-[2.5em]">
+                {animatedTagline}
+                <span className="animate-ping">|</span>
               </p>
               <p style={{ animationDelay: '0.3s', opacity: 0 }} className="animate-fadeIn text-md sm:text-lg text-muted-foreground max-w-xl mx-auto">
                 Turn your ambitious goals into actionable subtasks with a single click. Let our AI streamline your workflow, organize your thoughts, and boost your productivity effortlessly.
@@ -61,4 +77,3 @@ export default function LandingPage() {
     </div>
   );
 }
-

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { generateSubtasks, type GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
 import { suggestGoals, type SuggestGoalsOutput } from '@/ai/flows/suggest-goals-flow';
 import { Loader2, Sparkles, Plus, HelpCircle } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+// import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'; // Removed Card related imports
 import {
   Dialog,
   DialogContent,
@@ -23,7 +23,7 @@ interface GoalInputFormProps {
   onSubtasksGenerated: (goal: string, subtasks: GenerateSubtasksOutput['subtasks']) => void;
   setIsLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  isLoadingGlobal: boolean; // Renamed from isLoading to isLoadingGlobal
+  isLoadingGlobal: boolean; 
 }
 
 const examplePrompts = [
@@ -122,52 +122,45 @@ export default function GoalInputForm({ onSubtasksGenerated, setIsLoading, setEr
 
   return (
     <>
-      <Card className="shadow-xl w-full">
-        <CardHeader>
-          <CardTitle className="text-2xl text-primary">Enter Your Goal</CardTitle>
-          <CardDescription>Describe your main objective, and TaskWise will break it down for you.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Textarea
-              placeholder={animatedPlaceholder + (isTyping ? '|' : '')} 
-              value={goalInput}
-              onChange={(e) => setGoalInput(e.target.value)}
-              className="min-h-[100px] text-base focus:ring-primary transition-all duration-300 ease-in-out"
-              aria-label="Main goal input"
-            />
-            <div className="flex justify-end">
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={handleAiAssistClick}
-                className="text-muted-foreground hover:text-primary"
-                disabled={isSuggestionsLoading}
-              >
-                <Sparkles className="mr-2 h-4 w-4" />
-                Need help?
-              </Button>
-            </div>
-            <Button 
-              type="submit" 
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-6" 
-              disabled={isLoadingGlobal || !goalInput.trim()}
-            >
-              {isLoadingGlobal ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  Add Task <Plus className="ml-2 h-5 w-5" />
-                </>
-              )}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+      {/* Card wrapper removed from here, will be handled by parent */}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Textarea
+          placeholder={animatedPlaceholder + (isTyping ? '|' : '')} 
+          value={goalInput}
+          onChange={(e) => setGoalInput(e.target.value)}
+          className="min-h-[100px] text-base focus:ring-primary transition-all duration-300 ease-in-out"
+          aria-label="Main goal input"
+        />
+        <div className="flex justify-end">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleAiAssistClick}
+            className="text-muted-foreground hover:text-primary"
+            disabled={isSuggestionsLoading}
+          >
+            <Sparkles className="mr-2 h-4 w-4" />
+            Need help?
+          </Button>
+        </div>
+        <Button 
+          type="submit" 
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-6" 
+          disabled={isLoadingGlobal || !goalInput.trim()}
+        >
+          {isLoadingGlobal ? (
+            <>
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              Add Task <Plus className="ml-2 h-5 w-5" />
+            </>
+          )}
+        </Button>
+      </form>
 
       <Dialog open={isSuggestionsDialogOpen} onOpenChange={setIsSuggestionsDialogOpen}>
         <DialogContent className="sm:max-w-[525px]">

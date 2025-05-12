@@ -12,12 +12,13 @@ import DeadlinePickerModal from '@/components/DeadlinePickerModal';
 import GoalDisplay from '@/components/GoalDisplay';
 import AddGoalModal, { type AddGoalFormValues } from '@/components/AddGoalModal';
 import FullCalendarDisplay from '@/components/FullCalendarDisplay';
+import FloatingChatbotButton from '@/components/FloatingChatbotButton'; // Added
 import { Button } from '@/components/ui/button';
 import type { GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
 import { generateStepsForSubtask } from '@/ai/flows/generate-steps-for-subtask'; 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Terminal, Loader2, ListChecks, Save, PlusCircle } from "lucide-react";
+import { Terminal, Loader2, ListChecks, Save, PlusCircle, Rocket } from "lucide-react"; // Added Rocket
 import { useToast } from "@/hooks/use-toast";
 import type { TrackedGoal, SavedGoal, ExtendedSubtask } from '@/types';
 
@@ -68,19 +69,57 @@ export default function DashboardPage() {
     }
 
     const storedTrackedGoals = localStorage.getItem('taskwise_tracked_goals');
+    let initialTrackedGoals = sampleTrackedGoals;
     if (storedTrackedGoals) {
       try {
         const parsedTrackedGoals = JSON.parse(storedTrackedGoals);
-        setTrackedGoals(parsedTrackedGoals);
+        // Ensure parsedTrackedGoals is an array and has items, otherwise use sample
+        initialTrackedGoals = Array.isArray(parsedTrackedGoals) && parsedTrackedGoals.length > 0 ? parsedTrackedGoals : sampleTrackedGoals;
       } catch (e) {
         console.error("Failed to parse tracked goals from localStorage", e);
         localStorage.removeItem('taskwise_tracked_goals');
-        setTrackedGoals(sampleTrackedGoals); 
       }
-    } else {
-      setTrackedGoals(sampleTrackedGoals);
     }
-  }, []);
+    setTrackedGoals(initialTrackedGoals);
+
+    // Daily goal notification
+    // Find an incomplete short-term goal or the first goal if none are specific for "today"
+    const today = new Date().toISOString().split('T')[0];
+    let goalForToday: TrackedGoal | undefined = initialTrackedGoals.find(
+      g => !g.completed && g.type === 'short' && new Date(g.targetDate).toISOString().split('T')[0] === today
+    );
+    if (!goalForToday) {
+        goalForToday = initialTrackedGoals.find(g => !g.completed && g.type === 'short');
+    }
+    if (!goalForToday) {
+        goalForToday = initialTrackedGoals.find(g => !g.completed);
+    }
+
+    if (goalForToday) {
+        toast({
+            title: "Today's Focus",
+            description: (
+                <div className="flex items-center">
+                    <Rocket className="h-5 w-5 mr-2 text-primary" />
+                    <span>{goalForToday.title.substring(0, 50)}{goalForToday.title.length > 50 ? '...' : ''}</span>
+                </div>
+            ),
+            duration: 5000, // Show for 5 seconds
+        });
+    } else {
+        toast({
+            title: "Welcome!",
+            description: (
+                 <div className="flex items-center">
+                    <Rocket className="h-5 w-5 mr-2 text-primary" />
+                    <span>Ready to tackle your goals? Add some tasks!</span>
+                </div>
+            ),
+            duration: 5000,
+        });
+    }
+  }, [toast]); // Added toast to dependency array
+
 
   useEffect(() => {
     if (savedGoals.length > 0 || localStorage.getItem('taskwise_saved_goals')) {
@@ -324,14 +363,20 @@ export default function DashboardPage() {
         <main className="w-full max-w-3xl mt-6 md:mt-8 space-y-8">
           {currentView === 'tasks' && (
             <>
-              <div style={{ animationDelay: '0.1s', opacity: 0 }} className="animate-fadeIn w-full">
-                <GoalInputForm
-                  onSubtasksGenerated={handleSubtasksGenerated}
-                  setIsLoading={setIsLoading}
-                  setError={setError}
-                  isLoadingGlobal={isLoading}
-                />
-              </div>
+              <Card className="shadow-xl w-full animate-fadeIn" style={{ animationDelay: '0s', opacity: 0 }}>
+                <CardHeader className="pb-2">
+                   <CardTitle className="text-2xl text-primary">Welcome to TaskWise!</CardTitle>
+                   <CardDescription>Your AI-powered daily planner. Turn goals into actionable subtasks with one click.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <GoalInputForm
+                    onSubtasksGenerated={handleSubtasksGenerated}
+                    setIsLoading={setIsLoading}
+                    setError={setError}
+                    isLoadingGlobal={isLoading}
+                    />
+                </CardContent>
+              </Card>
               
               <div style={{ animationDelay: '0.2s', opacity: 0 }} className="animate-fadeIn w-full text-center mt-6">
                 <Button
@@ -457,6 +502,7 @@ export default function DashboardPage() {
           onClose={() => setIsAddGoalModalOpen(false)}
           onAddGoal={handleAddNewGoal}
         />
+        <FloatingChatbotButton /> 
         <footer className="text-center py-8 mt-auto animate-fadeIn" style={{ animationDelay: '0.5s', opacity: 0 }}>
           <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} TaskWise AI. All rights reserved.</p>
         </footer>
@@ -464,3 +510,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

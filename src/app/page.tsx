@@ -154,46 +154,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Screenshots Preview Section */}
-        <section className="flex flex-col items-center justify-center w-full p-4 py-12 md:p-8 md:py-20 bg-secondary text-foreground">
-          <div className="w-full max-w-4xl">
-            <Card className="shadow-xl animate-fadeIn" style={{ animationDelay: '0.2s', opacity: 0 }}>
-              <CardHeader className="text-center">
-                <CardTitle className="text-3xl md:text-4xl font-bold text-primary">App Preview</CardTitle>
-                <CardDescription className="text-lg text-muted-foreground mt-2">
-                  Get a glimpse of TaskWise AI in action.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-8">
-                <div className="relative aspect-video rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                  <Image
-                    src="https://picsum.photos/seed/taskwise1/600/400"
-                    alt="TaskWise AI Goal Input"
-                    layout="fill"
-                    objectFit="cover"
-                    data-ai-hint="goal input interface"
-                  />
-                   <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                    <p className="text-white text-lg font-semibold">Goal & Subtask Planning</p>
-                  </div>
-                </div>
-                <div className="relative aspect-video rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                   <Image
-                    src="https://picsum.photos/seed/taskwise2/600/400"
-                    alt="TaskWise AI Calendar View"
-                    layout="fill"
-                    objectFit="cover"
-                    data-ai-hint="calendar schedule view"
-                  />
-                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                    <p className="text-white text-lg font-semibold">Calendar & Deadline Tracking</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
         {/* FAQ Section */}
         <section className="flex flex-col items-center justify-center w-full p-4 py-12 md:p-8 md:py-20 bg-background text-foreground">
           <div className="w-full max-w-3xl">

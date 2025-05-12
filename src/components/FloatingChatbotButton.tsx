@@ -9,10 +9,10 @@ export default function FloatingChatbotButton() {
   const { toast } = useToast();
 
   const handleClick = () => {
-    // Placeholder for chatbot functionality
     toast({
-      title: "Chatbot Activated",
-      description: "The chatbot is not yet implemented. Stay tuned!",
+      title: "👋 TaskWise AI Assistant",
+      description: "Hi! I'm TaskWise AI Assistant. I can help you break down goals, remind you of deadlines, or guide you through the app. How can I help you today? (Chatbot functionality is under development.)",
+      duration: 7000, // Keep the message visible for a bit longer
     });
   };
 

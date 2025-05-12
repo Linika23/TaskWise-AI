@@ -5,8 +5,9 @@ import { useState, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { generateSubtasks, type GenerateSubtasksOutput } from '@/ai/flows/generate-subtasks';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Sparkles, Plus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from "@/hooks/use-toast";
 
 interface GoalInputFormProps {
   onSubtasksGenerated: (goal: string, subtasks: GenerateSubtasksOutput['subtasks']) => void;
@@ -33,6 +34,7 @@ export default function GoalInputForm({ onSubtasksGenerated, setIsLoading, setEr
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const promptChangeInterval = setInterval(() => {
@@ -80,6 +82,13 @@ export default function GoalInputForm({ onSubtasksGenerated, setIsLoading, setEr
     }
   };
 
+  const handleAiAssistClick = () => {
+    toast({
+      title: "AI Assist",
+      description: "Feature coming soon! Get suggestions for your goals.",
+    });
+  };
+
   return (
     <Card className="shadow-xl w-full">
       <CardHeader>
@@ -95,6 +104,18 @@ export default function GoalInputForm({ onSubtasksGenerated, setIsLoading, setEr
             className="min-h-[100px] text-base focus:ring-primary transition-all duration-300 ease-in-out"
             aria-label="Main goal input"
           />
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleAiAssistClick}
+              className="text-muted-foreground hover:text-primary"
+            >
+              <Sparkles className="mr-2 h-4 w-4" />
+              Need help?
+            </Button>
+          </div>
           <Button 
             type="submit" 
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-6" 
@@ -106,7 +127,9 @@ export default function GoalInputForm({ onSubtasksGenerated, setIsLoading, setEr
                 Generating...
               </>
             ) : (
-              "Generate Subtasks"
+              <>
+                Add Task <Plus className="ml-2 h-5 w-5" />
+              </>
             )}
           </Button>
         </form>
@@ -114,3 +137,4 @@ export default function GoalInputForm({ onSubtasksGenerated, setIsLoading, setEr
     </Card>
   );
 }
+

@@ -1,4 +1,4 @@
-import { BrainCircuit } from 'lucide-react';
+import { BrainCircuit, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function Header() {
@@ -9,8 +9,8 @@ export default function Header() {
           <BrainCircuit className="h-8 w-8 md:h-10 md:w-10 mr-3 text-primary" />
           <h1 className="text-3xl md:text-4xl font-bold text-primary">My Tasks</h1>
         </div>
-        <Button variant="ghost" className="text-primary hover:bg-primary/10 hover:text-primary">
-          Calendar View
+        <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/10 hover:text-primary" aria-label="Calendar View">
+          <CalendarDays className="h-6 w-6" />
         </Button>
       </div>
     </header>
